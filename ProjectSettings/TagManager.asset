@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - RED
+  - BLUE
+  - GREEN
+  - YELLOW
+  - SPIDER
+  - BSD
+  - TUX
+  - SNAKE
+  - FLYING
+  - WALL
+  - THROWN
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Floor
+    uniqueID: 749862511
+    locked: 0
+  - name: Tile
+    uniqueID: 1619180029
+    locked: 0
+  - name: PowerUP
+    uniqueID: 3863241809
+    locked: 0
+  - name: Bomb
+    uniqueID: 683592437
+    locked: 0
+  - name: Player
+    uniqueID: 2676862911
+    locked: 0

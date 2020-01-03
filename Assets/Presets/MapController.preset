@@ -1,0 +1,230 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MapController
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: c0f222573a6eb594a877a4d79b4875ba,
+      type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.size
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[0].type
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[0].wallSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: ae9447c051ca3ed4383fe1a79eaf2d01, type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[0].normalBox
+    value: 
+    objectReference: {fileID: 250556490011334668, guid: b416d68ee1eaa1943a0326b159c02924,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[0].explodedBox
+    value: 
+    objectReference: {fileID: 4458857894276049150, guid: b416d68ee1eaa1943a0326b159c02924,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[0].floor
+    value: 
+    objectReference: {fileID: 21300000, guid: 88d865b722c0f1443ba632e6f857f62f, type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[1].type
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[1].wallSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: e08f56ef9d216144ebadc77ffa7ee73e, type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[1].normalBox
+    value: 
+    objectReference: {fileID: -5985354146522803921, guid: 5fa8bc2f18a3e7c4a92ee4c20d860da8,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[1].explodedBox
+    value: 
+    objectReference: {fileID: 8855169806575446361, guid: b81e6b37b565d2f41b1285b492a4a270,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[1].floor
+    value: 
+    objectReference: {fileID: 21300000, guid: 9c32ce53a0389584d905969cce5bfbe3, type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[2].type
+    value: 2
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[2].wallSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: cc816631deb3ea6439725575dc838604, type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[2].normalBox
+    value: 
+    objectReference: {fileID: 7090881075196277261, guid: b81e6b37b565d2f41b1285b492a4a270,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[2].explodedBox
+    value: 
+    objectReference: {fileID: 8855169806575446361, guid: b81e6b37b565d2f41b1285b492a4a270,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: typeSprites.Array.data[2].floor
+    value: 
+    objectReference: {fileID: 21300000, guid: 9b4f96670c2835a4885afe014dc14908, type: 3}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.size
+    value: 8
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[0].type
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[0].Sprite
+    value: 
+    objectReference: {fileID: 21300000, guid: 7a4164cd2c0092f42aadae93ab2717db, type: 3}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[1].type
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[1].Sprite
+    value: 
+    objectReference: {fileID: 21300000, guid: 8ded371fc6144d643b7e44d69b259ff1, type: 3}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[2].type
+    value: 2
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[2].Sprite
+    value: 
+    objectReference: {fileID: 21300000, guid: 7cf309765c523ce46890157192a0458d, type: 3}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[3].type
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[3].Sprite
+    value: 
+    objectReference: {fileID: 21300000, guid: f8e7ae5e1ef6f4f459bfca643a22056b, type: 3}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[4].type
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[4].Sprite
+    value: 
+    objectReference: {fileID: 21300000, guid: a8c175f160ca4e342bbe9a561f9c109a, type: 3}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[5].type
+    value: 5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[5].Sprite
+    value: 
+    objectReference: {fileID: 21300000, guid: 4411a70e1ab442e4784edf97b25bef5f, type: 3}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[6].type
+    value: 6
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[6].Sprite
+    value: 
+    objectReference: {fileID: 21300000, guid: 29e0723f26d073a479565feb086f6bf0, type: 3}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[7].type
+    value: 7
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: powerUPtypeSprites.Array.data[7].Sprite
+    value: 
+    objectReference: {fileID: 21300000, guid: 146b9df0c58f8e64ba37dcac6408f128, type: 3}
+  - target: {fileID: 0}
+    propertyPath: floorMap
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: wallMap
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: boxMap
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: triggerMap
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: previewMap
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: iceMap
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: currentMapType
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: HoleSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: aa3bd14b535b773499883a9a7a5a1608, type: 3}
+  - target: {fileID: 0}
+    propertyPath: IceSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: cfa777395508f97409d69a4fbc829ffd, type: 3}
+  - target: {fileID: 0}
+    propertyPath: UpArrowSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: 8ee55018a80279e44a3380595e393ec8, type: 3}
+  - target: {fileID: 0}
+    propertyPath: DownArrowSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: ab44ea90e49ec8545ade1ed07f46fed4, type: 3}
+  - target: {fileID: 0}
+    propertyPath: RightArrowSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: 253ea482a49737f4a9b05ee6ad720fd1, type: 3}
+  - target: {fileID: 0}
+    propertyPath: LeftArrowSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: ba6aa0c82aa03464ab08ed5913a70cbb, type: 3}
+  - target: {fileID: 0}
+    propertyPath: SpawnSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: 2a5843ae5148eae4fb69e3f11e733ffe, type: 3}
+  - target: {fileID: 0}
+    propertyPath: RandomBoxSprite
+    value: 
+    objectReference: {fileID: 21300000, guid: c291511a883969e42a0d1a396f66e735, type: 3}
+  - target: {fileID: 0}
+    propertyPath: PowerUPPrefab
+    value: 
+    objectReference: {fileID: 2681191108536017064, guid: e20c3dff9e30b4b42bf87803acdac63a,
+      type: 3}

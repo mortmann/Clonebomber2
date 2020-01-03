@@ -1,0 +1,880 @@
+fileFormatVersion: 2
+guid: 322751b0b89082043823125526a97715
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4625965200364843426
+    second: explosion2_0
+  - first:
+      213: -208267998733222760
+    second: explosion2_1
+  - first:
+      213: -6131150567242327500
+    second: explosion2_2
+  - first:
+      213: -2092004726081965303
+    second: explosion2_3
+  - first:
+      213: 321748802186315435
+    second: explosion2_4
+  - first:
+      213: -4960266159461346474
+    second: explosion2_5
+  - first:
+      213: 2643740925410311312
+    second: explosion2_6
+  - first:
+      213: 6990884901119904045
+    second: explosion2_7
+  - first:
+      213: 3729883006976011129
+    second: explosion2_8
+  - first:
+      213: -6292476449839541965
+    second: explosion2_9
+  - first:
+      213: 8181503159718755926
+    second: explosion2_10
+  - first:
+      213: 7055284876575534073
+    second: explosion2_11
+  - first:
+      213: 119788836393304476
+    second: explosion2_12
+  - first:
+      213: -7421214974399818528
+    second: explosion2_13
+  - first:
+      213: 3746556007935167518
+    second: explosion2_14
+  - first:
+      213: 796513459687070129
+    second: explosion2_15
+  - first:
+      213: -2418904240979333514
+    second: explosion2_16
+  - first:
+      213: -7603903933866228766
+    second: explosion2_17
+  - first:
+      213: -2502408464637145218
+    second: explosion2_18
+  - first:
+      213: 6926922314839325655
+    second: explosion2_19
+  - first:
+      213: 4537693705119336550
+    second: explosion2_20
+  - first:
+      213: -8092295105046505211
+    second: explosion_big_end_left
+  - first:
+      213: -5243772346084840235
+    second: explosion_big_middle_rl
+  - first:
+      213: -4009157606203222040
+    second: explosion_big_end_right
+  - first:
+      213: 3730887761424324059
+    second: explosion_big_end_up
+  - first:
+      213: -4927540249515241657
+    second: explosion_big_middle_ud
+  - first:
+      213: 5684552838703836615
+    second: explosion_big_end_down
+  - first:
+      213: -1000500801407918923
+    second: explosion_big_cross
+  - first:
+      213: -3556220708966662747
+    second: explosion_medium_end_left
+  - first:
+      213: 950242065716622878
+    second: explosion_medium_middle_rl
+  - first:
+      213: 1871906383385562927
+    second: explosion_medium_end_right
+  - first:
+      213: -5371098934410574880
+    second: explosion_medium_end_up
+  - first:
+      213: -1551774312519300948
+    second: explosion_medium_middle_up
+  - first:
+      213: 8761117149865828687
+    second: explosion_medium_end_down
+  - first:
+      213: 2349602722129606322
+    second: explosion_medium_cross
+  - first:
+      213: 7773491377804077996
+    second: explosion_small_end_left
+  - first:
+      213: 1467323325375670837
+    second: explosion_small_middle_rl
+  - first:
+      213: 4542189021846940948
+    second: explosion_small_end_right
+  - first:
+      213: -8590846737339631838
+    second: explosion_small_end_up
+  - first:
+      213: 3996794502770762282
+    second: explosion_small_middle_ud
+  - first:
+      213: -5328293131749856865
+    second: explosion_small_end_down
+  - first:
+      213: 8757869890930774319
+    second: explosion_small_cross
+  - first:
+      213: -7750084750066023829
+    second: explosion_right_big_end
+  - first:
+      213: 2520903358756285405
+    second: explosion_rl_middle_big
+  - first:
+      213: -1855426014632058331
+    second: explosion_right_big_end
+  - first:
+      213: -5973066641057131
+    second: explosion_up_big_end
+  - first:
+      213: -4927540249515241657
+    second: explosion_ud_middle_big
+  - first:
+      213: 5684552838703836615
+    second: explosion_down_big_end
+  - first:
+      213: -1000500801407918923
+    second: explosion_cross_big
+  - first:
+      213: 8502463971616478206
+    second: explosion_right_medium_end
+  - first:
+      213: -878091362762768710
+    second: explosion_rl_middle_medium
+  - first:
+      213: -8420396624512095153
+    second: explosion_right_medium_end
+  - first:
+      213: 4020166910072820808
+    second: explosion_up_medium_end
+  - first:
+      213: 8761117149865828687
+    second: explosion_ud_middle_medium
+  - first:
+      213: 2349602722129606322
+    second: explosion_down_medium_end
+  - first:
+      213: 7773491377804077996
+    second: explosion_cross_medium
+  - first:
+      213: -3501428325239156828
+    second: explosion_right_small_end
+  - first:
+      213: -2570320724671143180
+    second: explosion_rl_middle_small
+  - first:
+      213: -1462057673833593304
+    second: explosion_right_small_end
+  - first:
+      213: 1288542681473174814
+    second: explosion_up_small_end
+  - first:
+      213: 8757869890930774319
+    second: explosion_ud_middle_small
+  - first:
+      213: 5583760979089145045
+    second: explosion_down_small_end
+  - first:
+      213: -6611490010577821925
+    second: explosion_cross_small
+  externalObjects: {}
+  serializedVersion: 10
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 40
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: explosion_left_big_end
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 80
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -12, y: 16}
+        - {x: -12, y: -13}
+        - {x: -11, y: -16}
+        - {x: 20, y: -16}
+        - {x: 20, y: 16}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6bfb43e339a059c44bdaf6fda3ac324c
+      internalID: -7750084750066023829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_rl_middle_big
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 80
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -14, y: 16}
+        - {x: -20, y: 15}
+        - {x: -20, y: -16}
+        - {x: 20, y: -16}
+        - {x: 20, y: 16}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d100009c80204e4aa24e5855269649a
+      internalID: 2520903358756285405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_right_big_end
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 80
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -20, y: 16}
+        - {x: -20, y: -16}
+        - {x: 12, y: -16}
+        - {x: 12, y: 10}
+        - {x: 12, y: 16}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21f4671187f99e24ca05298fd2de252e
+      internalID: -1855426014632058331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_up_big_end
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 80
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -9, y: 13}
+        - {x: -16, y: 6}
+        - {x: -16, y: -20}
+        - {x: 16, y: -20}
+        - {x: 16, y: 8}
+        - {x: 13, y: 13}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 994ac124cbeb3744ea9c29019b56cbb9
+      internalID: -5973066641057131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_ud_middle_big
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 80
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -16, y: 20}
+        - {x: -16, y: -20}
+        - {x: 16, y: -20}
+        - {x: 16, y: 20}
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee88206c5783d42489af156feac71532
+      internalID: -4927540249515241657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_down_big_end
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 80
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -16, y: 20}
+        - {x: -16, y: -13}
+        - {x: 16, y: -13}
+        - {x: 16, y: 20}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52abec12099065f49a039acbb4ca17cc
+      internalID: 5684552838703836615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_cross_big
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 80
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -20, y: 20}
+        - {x: -20, y: -17}
+        - {x: -19, y: -20}
+        - {x: 17, y: -20}
+        - {x: 20, y: -17}
+        - {x: 20, y: 19}
+        - {x: 17, y: 20}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2534cfed1395be343b0dfaa03174e052
+      internalID: -1000500801407918923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_left_medium_end
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 40
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -3, y: 12}
+        - {x: -11, y: 9}
+        - {x: -11, y: -10}
+        - {x: -2, y: -12}
+        - {x: 20, y: -12}
+        - {x: 20, y: 11}
+        - {x: 19, y: 12}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e6e048dc1f7bdc439d4d3f6887cda54
+      internalID: 8502463971616478206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_rl_middle_medium
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 40
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -20, y: 12}
+        - {x: -20, y: -12}
+        - {x: 20, y: -12}
+        - {x: 20, y: 11}
+        - {x: 17, y: 12}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77f97ef81705f0e4482b18ad7ee645e1
+      internalID: -878091362762768710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_right_medium_end
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 40
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -3, y: 12}
+        - {x: -13, y: 12}
+        - {x: -20, y: 11}
+        - {x: -20, y: -11}
+        - {x: -18, y: -12}
+        - {x: 6, y: -12}
+        - {x: 11, y: -8}
+        - {x: 11, y: 5}
+        - {x: 3, y: 11}
+      tessellationDetail: 0
+      bones: []
+      spriteID: a607a7b234820d742bdd240d7e2b1b83
+      internalID: -8420396624512095153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_up_medium_end
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 40
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -10, y: 12}
+        - {x: -12, y: 0}
+        - {x: -12, y: -18}
+        - {x: -11, y: -20}
+        - {x: 11, y: -20}
+        - {x: 12, y: -14}
+        - {x: 12, y: 6}
+        - {x: 9, y: 12}
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea4d35cc46756474b8b5578291559aa4
+      internalID: 4020166910072820808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_ud_middle_medium
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 40
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -12, y: 20}
+        - {x: -12, y: -15}
+        - {x: -11, y: -20}
+        - {x: 12, y: -20}
+        - {x: 12, y: 20}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5458eeccbf6588841a6623dfa7fde0dd
+      internalID: 8761117149865828687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_down_medium_end
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 40
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -11, y: 20}
+        - {x: -12, y: 16}
+        - {x: -12, y: -5}
+        - {x: -9, y: -12}
+        - {x: 6, y: -12}
+        - {x: 11, y: -11}
+        - {x: 12, y: -7}
+        - {x: 12, y: 20}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06bb39489b2a7404fbcdf54604952ace
+      internalID: 2349602722129606322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_cross_medium
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 40
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -19, y: 20}
+        - {x: -20, y: 18}
+        - {x: -20, y: -19}
+        - {x: -16, y: -20}
+        - {x: 16, y: -20}
+        - {x: 20, y: -14}
+        - {x: 20, y: 12}
+        - {x: 11, y: 20}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f39c23555ba9f54db6b8ac7d4d0e80a
+      internalID: 7773491377804077996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_left_small_end
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -4, y: 8}
+        - {x: -9, y: 7}
+        - {x: -9, y: -7}
+        - {x: -5, y: -8}
+        - {x: 20, y: -8}
+        - {x: 20, y: 8}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 672a2096a1c21db4cba36d7794805c0c
+      internalID: -3501428325239156828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_rl_middle_small
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 0
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -19, y: 8}
+        - {x: -20, y: 7}
+        - {x: -20, y: -8}
+        - {x: 20, y: -8}
+        - {x: 20, y: 8}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 08ef297d0564e1042aed17defbf2f616
+      internalID: -2570320724671143180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_right_small_end
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 0
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 6, y: 7}
+        - {x: 5, y: 8}
+        - {x: -20, y: 8}
+        - {x: -20, y: -8}
+        - {x: 3, y: -8}
+        - {x: 7, y: -5}
+        - {x: 9, y: 0}
+        - {x: 9, y: 3}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36dd543e205d9c24f90e2139f2196141
+      internalID: -1462057673833593304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_up_small_end
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 0
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -8, y: 8}
+        - {x: -8, y: -20}
+        - {x: 8, y: -20}
+        - {x: 8, y: 8}
+      - - {x: 0, y: 18}
+        - {x: 0, y: 20}
+        - {x: -5, y: 20}
+        - {x: -3, y: 17}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c1c0868ae864334eab86ae6263e8652
+      internalID: 1288542681473174814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_ud_middle_small
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -7, y: 20}
+        - {x: -8, y: 19}
+        - {x: -8, y: -20}
+        - {x: 8, y: -20}
+        - {x: 8, y: 20}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d2fabdcdfda8814faff466679ba3824
+      internalID: 8757869890930774319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_down_small_end
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 0
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -7, y: 20}
+        - {x: -8, y: 19}
+        - {x: -8, y: -5}
+        - {x: -7, y: -7}
+        - {x: -4, y: -8}
+        - {x: 5, y: -8}
+        - {x: 8, y: -7}
+        - {x: 8, y: 19}
+        - {x: 7, y: 20}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52457f7754a9e1a46894791e53e8abfc
+      internalID: 5583760979089145045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: explosion_cross_small
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 0
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -15, y: 20}
+        - {x: -20, y: 8}
+        - {x: -20, y: -14}
+        - {x: -9, y: -20}
+        - {x: 17, y: -20}
+        - {x: 20, y: -12}
+        - {x: 20, y: 18}
+        - {x: 15, y: 20}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53b421fa94931e042825325d207d7262
+      internalID: -6611490010577821925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
