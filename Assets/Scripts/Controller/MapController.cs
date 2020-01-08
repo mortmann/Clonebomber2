@@ -320,6 +320,10 @@ public class MapController : MonoBehaviour {
         }
         else {
             floorMap.SetTile(vector3Int, null);
+            wallMap.SetTile(vector3Int, null);
+            boxMap.SetTile(vector3Int, null);
+            iceMap.SetTile(vector3Int, null);
+            triggerMap.SetTile(vector3Int, null);
             Tiles[Mathf.FloorToInt(vector3Int.x), Mathf.FloorToInt(vector3Int.y)].Type = TileType.Empty;
         }
     }

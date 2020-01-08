@@ -97,6 +97,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {x: 0, y: 0}
   startPosition: {x: 9.5, y: 14.75}
+  crunchClip: {fileID: 8300000, guid: 07762f2d1b9e4a14eb6d52eb74b63673, type: 3}
 --- !u!82 &2110343969441675399
 AudioSource:
   m_ObjectHideFlags: 0

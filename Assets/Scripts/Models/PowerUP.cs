@@ -9,7 +9,8 @@ public class PowerUP : Flyable {
     public AudioClip fallingClip;
 
     private void Update() {
-        
+        if(isFlying==false)
+            CheckTile();
     }
     protected override void CheckTile() {
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
