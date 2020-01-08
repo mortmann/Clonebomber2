@@ -16,6 +16,7 @@ public class MapController : MonoBehaviour {
 
     public Tilemap floorMap;
     public Tilemap wallMap;
+
     public Tilemap boxMap;
     public Tilemap triggerMap;
     public Tilemap previewMap;
@@ -26,6 +27,7 @@ public class MapController : MonoBehaviour {
 
     public Sprite HoleSprite;
     public Sprite IceSprite;
+
     public Sprite UpArrowSprite;
     public Sprite DownArrowSprite;
     public Sprite RightArrowSprite;
@@ -40,13 +42,19 @@ public class MapController : MonoBehaviour {
 
     MapTile[,] Tiles;
     List<MapTile> ListOfTiles;
-    Vector2Int[] Spawns;
+    MapTile[] Spawns;
     int maxX = 18;
     int maxY = 14;
 
     internal Vector2 ClampVector(Vector2 target) {
         return new Vector2(Mathf.Clamp(target.x, 0, maxX), Mathf.Clamp(target.y, 0, maxY));
     }
+
+    internal string[] GetMapFile(string map) {
+        return File.ReadAllLines(Path.Combine(Application.streamingAssetsPath, "Maps", map+".map"));
+    }
+
+    static string loadMap = "Hole_Run";
 
     void Start() {
         Instance = this;
@@ -59,7 +67,7 @@ public class MapController : MonoBehaviour {
         }
         ListOfTiles = new List<MapTile>();
         LoadTileBases();
-        LoadMap("Hole_Run.map");
+        LoadMap(loadMap);
     }
 
     void Update() {
@@ -74,8 +82,8 @@ public class MapController : MonoBehaviour {
             previewMap.ClearAllTiles();
         iceMap.ClearAllTiles();
 
-        Dictionary<int, Vector2Int> dicSpawns = new Dictionary<int, Vector2Int>();
-        string[] allLines = File.ReadAllLines(Path.Combine(Application.streamingAssetsPath, "Maps", name));
+        Dictionary<int, MapTile> dicSpawns = new Dictionary<int, MapTile>();
+        string[] allLines = GetMapFile(name);
         int y = 1; //because outer layer be empty
         for (int i = allLines.Length-1; i >= 2; i--) {
             string line = allLines[i];
@@ -116,18 +124,23 @@ public class MapController : MonoBehaviour {
                 }
                 else if (Char.IsDigit(c)) {
                     Tiles[x, y] = new MapTile(TileType.Spawn, x, y); 
-                    dicSpawns[int.Parse("" + c)] = (new Vector2Int(x, y));
+                    dicSpawns[int.Parse("" + c)] = Tiles[x, y];
                 }
                 ListOfTiles.Add(Tiles[x, y]);
                 x++;
             }
             y++;
         }
-        Spawns = new Vector2Int[dicSpawns.Count];
+        Spawns = new MapTile[dicSpawns.Count];
         foreach (int i in dicSpawns.Keys) {
             Spawns[i] = dicSpawns[i];
         }
+        PlayerController.Instance?.SetSpawnPosition(Spawns);
         SetTileMaps();
+    }
+
+    internal static void SetMap(string map) {
+        loadMap = map;
     }
 
     internal TileType GetTileTypeAt(Vector3 pos) {
@@ -223,7 +236,7 @@ public class MapController : MonoBehaviour {
         Tile holeBase = ScriptableObject.CreateInstance<Tile>();
         holeBase.sprite = HoleSprite;
         holeBase.colliderType = Tile.ColliderType.Sprite;
-        typeToTileBase[TileType.Hole] = wallBase;
+        typeToTileBase[TileType.Hole] = holeBase;
 
         Tile iceBase = ScriptableObject.CreateInstance<Tile>();
         iceBase.sprite = IceSprite;
@@ -279,6 +292,20 @@ public class MapController : MonoBehaviour {
         RemoveTile(vector3Int, map, type);
         yield return null;
     }
+    internal void DestroyTile(Vector3 vector3) {
+        Vector3Int vector3Int = new Vector3Int(Mathf.FloorToInt(vector3.x), Mathf.FloorToInt(vector3.y), 0);
+        switch (Tiles[vector3Int.x, vector3Int.y].Type) {
+            case TileType.Box:
+                RemoveTile(vector3Int, boxMap, TileType.Box);
+                break;
+            case TileType.Wall:
+                RemoveTile(vector3Int, wallMap, TileType.Wall);
+                break;
+            default:
+                RemoveTile(vector3Int, floorMap, Tiles[vector3Int.x, vector3Int.y].Type);
+                break;
+        }
+    }
     public void RemoveTile(Vector3Int vector3Int, Tilemap map, TileType type) {
         map.SetTile(vector3Int, null);
         TileType tt = Tiles[vector3Int.x, vector3Int.y].Type;
@@ -293,14 +320,14 @@ public class MapController : MonoBehaviour {
         }
         else {
             floorMap.SetTile(vector3Int, null);
-            Tiles[Mathf.FloorToInt(vector3Int.x), Mathf.FloorToInt(vector3Int.y)].Type = TileType.Floor;
+            Tiles[Mathf.FloorToInt(vector3Int.x), Mathf.FloorToInt(vector3Int.y)].Type = TileType.Empty;
         }
     }
 
     private void OnBoxDestroy(Vector3Int vector3Int) {
-        //if (UnityEngine.Random.Range(0, 100) > 33) {
-        //    return;
-        //}
+        if (UnityEngine.Random.Range(0, 100) > 33) {
+            return;
+        }
         PowerUP pu = Instantiate(PowerUPPrefab);
         if(UnityEngine.Random.Range(0, 100)<25) {
             PowerUPType put = (PowerUPType)5 + UnityEngine.Random.Range(0, 3);
@@ -323,6 +350,17 @@ public class MapController : MonoBehaviour {
         }
         MapTile mt = choose[UnityEngine.Random.Range(0, choose.Count)];
         return new Vector2(mt.x, mt.y);
+    }
+
+    internal void CreateAndFlyPowerUPs(Dictionary<PowerUPType, int> powerUPTypeToAmount, PlayerData pm) {
+        foreach(PowerUPType up in powerUPTypeToAmount.Keys) {
+            for (int i = 0; i < powerUPTypeToAmount[up]; i++) {
+                PowerUP powerUP = Instantiate(PowerUPPrefab);
+                powerUP.SetPowerType(up, powerUPtypeSprites.Find(x => x.type == up).Sprite);
+                powerUP.transform.position = pm.gameObject.transform.position;
+                powerUP.FlyToTarget(GetRandomTargetTile(true, true));
+            }
+        }
     }
 
     [Serializable]

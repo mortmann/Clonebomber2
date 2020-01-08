@@ -6,14 +6,32 @@ public enum PowerUPType { Speed, Blastradius, Bomb, Push, Throw, Diarrhea, Joint
 public class PowerUP : Flyable {
 
     public PowerUPType PowerType;
+    public AudioClip fallingClip;
 
-    private void OnCollisionEnter2D(Collision2D collision) {
+    private void Update() {
+        
+    }
+    protected override void CheckTile() {
+        MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
+        switch (tt.Type) {
+            case TileType.Empty:
+                if (gameObject.layer == LayerMask.NameToLayer("FLYING"))
+                    return;
+                isFlying = true;
+                Debug.Log("Falling");
+                gameObject.layer = LayerMask.NameToLayer("FLYING");
+                GetComponent<AudioSource>().PlayOneShot(fallingClip);
+                StartCoroutine(Falling());
+                break;
+            }
+        }
+                private void OnCollisionEnter2D(Collision2D collision) {
         Debug.Log("OnCollisionEnter2D" + collision);
         if (collision.collider.GetComponent<Blastbeam>() != null) {
             Destroy(this.gameObject);
         }
-        if (collision.collider.GetComponent<PlayerData>() != null) {
-            collision.collider.GetComponent<PlayerData>().AddPowerUP(PowerType);
+        if (collision.collider.GetComponent<PlayerMove>() != null) {
+            collision.collider.GetComponent<PlayerMove>().AddPowerUP(PowerType);
             Destroy(this.gameObject);
         }
     }
@@ -26,8 +44,8 @@ public class PowerUP : Flyable {
                 Destroy(this.gameObject);
             }
         }
-        if (collision.GetComponent<PlayerData>() != null) {
-            collision.GetComponent<PlayerData>().AddPowerUP(PowerType);
+        if (collision.GetComponent<PlayerMove>() != null) {
+            collision.GetComponent<PlayerMove>().AddPowerUP(PowerType);
             Destroy(this.gameObject);
         }
     }

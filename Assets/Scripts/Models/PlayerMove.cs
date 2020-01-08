@@ -3,16 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum KeyInputs { Up, Down, Right, Left, Bomb }
-public class PlayerMove : MonoBehaviour {
+public enum KeyInputs { Up, Down, Right, Left, Action }
+public class PlayerMove : Flyable {
 
-    Dictionary<KeyInputs, KeyCode> inputToCode = new Dictionary<KeyInputs, KeyCode> {
-        { KeyInputs.Up, KeyCode.UpArrow },
-        { KeyInputs.Down, KeyCode.DownArrow },
-        { KeyInputs.Right, KeyCode.RightArrow },
-        { KeyInputs.Left, KeyCode.LeftArrow },
-        { KeyInputs.Bomb, KeyCode.RightControl }
-    };
+    public AudioSource audioSource;
+    public Dictionary<KeyInputs, KeyCode> InputToCode => PlayerData.inputToCode;
+
+    public int controller=-1;
+    //string controllerActionKey = "joystick " + controller + " button 0";
+    //string controllerActionKey = "joystick " + controller + " Horizontal";
+    //string controllerActionKey = "joystick " + controller + " Vertical";
     List<Vector3> moves;
     public float DefaultMoveSpeed = 2.25f;
     int throwDistance = 4;
@@ -21,54 +21,75 @@ public class PlayerMove : MonoBehaviour {
     Rigidbody2D Rigidbody;
     int PlacedBombs;
     PlayerData PlayerData;
-    int MovementSign => PlayerData.HasInvertedControls ? -1 : 1;
+
+    public Dictionary<PowerUPType, int> powerUPTypeToAmount { get; internal set; }
+    public int NumberBombs => powerUPTypeToAmount[PowerUPType.Bomb];
+    public bool CanThrowBombs => powerUPTypeToAmount[PowerUPType.Throw] > 0;
+    public bool CanPushBombs => powerUPTypeToAmount[PowerUPType.Push] > 0;
+    public int NumberSpeeds => powerUPTypeToAmount[PowerUPType.Speed];
+    public int Blastradius => powerUPTypeToAmount[PowerUPType.Blastradius];
+    public bool HasDiarrhea => powerUPTypeToAmount[PowerUPType.Diarrhea] > 0;
+    public bool HasInvertedControls => powerUPTypeToAmount[PowerUPType.Joint] > 0;
+    public bool IsSuperFast => powerUPTypeToAmount[PowerUPType.Superspeed] > 0;
+    public bool HasNegativEffect => lastEffect == PowerUPType.Diarrhea || lastEffect == PowerUPType.Joint || lastEffect == PowerUPType.Superspeed;
+    PowerUPType lastEffect;
+
+
+    int MovementSign => HasInvertedControls ? -1 : 1;
     Vector3 LastMove=Vector2.right;
     private bool IsOnIce;
     private Bomb lastPlacedBomb;
     float BombCooldown = 0.177f;
     void Start() {
+        audioSource = GetComponent<AudioSource>();
         moves = new List<Vector3>();
         Rigidbody = GetComponent<Rigidbody2D>();
         PlayerData = GetComponent<PlayerData>();
+        powerUPTypeToAmount = new Dictionary<PowerUPType, int>();
+        foreach (PowerUPType pt in Enum.GetValues(typeof(PowerUPType)))
+            powerUPTypeToAmount[pt] = 0;
+
+        powerUPTypeToAmount[PowerUPType.Bomb] = 2;
+        powerUPTypeToAmount[PowerUPType.Blastradius] = 2;
+        powerUPTypeToAmount[PowerUPType.Push] = 2;
     }
     
     void Update() {
         if (PlayerData.IsDead)
             return;
-
-        if (Input.GetKeyDown(inputToCode[KeyInputs.Up])) {
+        if (IsUPDown()) {
             moves.Remove(Vector3.up);
             moves.Insert(0,Vector3.up);
         } 
-        if (Input.GetKeyDown(inputToCode[KeyInputs.Down])) {
+        if (IsDownDown()) {
             moves.Remove(Vector3.down);
             moves.Insert(0, Vector3.down);
         }
-        if (Input.GetKeyDown(inputToCode[KeyInputs.Right])) {
+        if (IsRightDown()) {
             moves.Remove(Vector3.right);
             moves.Insert(0, Vector3.right);
         }
-        if (Input.GetKeyDown(inputToCode[KeyInputs.Left])) {
+        if (IsLeftDown()) {
             moves.Remove(Vector3.left);
             moves.Insert(0, Vector3.left);
         }
-        if (Input.GetKeyUp(inputToCode[KeyInputs.Up])) {
+        if (IsUPUp()) {
             moves.Remove(Vector3.up);
         }
-        if (Input.GetKeyUp(inputToCode[KeyInputs.Down])) {
+        if (IsDownUp()) {
             moves.Remove(Vector3.down);
         }
-        if (Input.GetKeyUp(inputToCode[KeyInputs.Right])) {
+        if (IsRightUp()) {
             moves.Remove(Vector3.right);
         }
-        if (Input.GetKeyUp(inputToCode[KeyInputs.Left])) {
+        if (IsLeftUp()) {
             moves.Remove(Vector3.left);
         }
-        if (Input.GetKeyDown(inputToCode[KeyInputs.Bomb]) || PlayerData.HasDiarrhea) {
+        if (IsAction() || HasDiarrhea) {
             if (lastPlacedBomb!=null&& lastPlacedBomb.gameObject.layer == gameObject.layer) {
                 lastPlacedBomb.FlyToTarget(this.transform.position + LastMove * throwDistance,true);
             } else
-            if (PlacedBombs < PlayerData.NumberBombs) {
+            if (PlacedBombs < NumberBombs) {
                 BombCooldown = BombCooldownTime;
                 lastPlacedBomb = BombController.Instance.PlaceBomb(PlayerData.Character, transform.position);
                 if (lastPlacedBomb != null) {
@@ -83,32 +104,86 @@ public class PlayerMove : MonoBehaviour {
         CheckTile();
     }
 
-    internal void Set(Dictionary<KeyInputs, KeyCode> inputToCode) {
-        this.inputToCode = inputToCode;
+    private bool IsUPDown() {
+        if(controller != -1) {
+            return Input.GetAxis("joystick " + controller + " vorizontal") < 0;
+        }
+        return Input.GetKeyDown(InputToCode[KeyInputs.Up]);
+    }
+    private bool IsDownDown() {
+        if (controller != -1) {
+            return Input.GetAxis("joystick " + controller + " vorizontal") > 0;
+        }
+        return Input.GetKeyDown(InputToCode[KeyInputs.Down]);
+    }
+    private bool IsLeftDown() {
+        if (controller != -1) {
+            return Input.GetAxis("joystick " + controller + " horizontal") < 0;
+        }
+        return Input.GetKeyDown(InputToCode[KeyInputs.Left]);
+    }
+    private bool IsRightDown() {
+        if (controller != -1) {
+            return Input.GetAxis("joystick " + controller + " horizontal") > 0;
+        }
+        return Input.GetKeyDown(InputToCode[KeyInputs.Right]);
+    }
+    private bool IsUPUp() {
+        if (controller != -1) {
+            return Input.GetAxis("joystick " + controller + " vorizontal") >= 0;
+        }
+        return Input.GetKeyUp(InputToCode[KeyInputs.Up]);
+    }
+    private bool IsDownUp() {
+        if (controller != -1) {
+            return Input.GetAxis("joystick " + controller + " vorizontal") <= 0;
+        }
+        return Input.GetKeyUp(InputToCode[KeyInputs.Down]);
+    }
+    private bool IsLeftUp() {
+        if (controller != -1) {
+            return Input.GetAxis("joystick " + controller + " horizontal") >= 0;
+        }
+        return Input.GetKeyUp(InputToCode[KeyInputs.Left]);
+    }
+    private bool IsRightUp() {
+        if (controller != -1) {
+            return Input.GetAxis("joystick " + controller + " horizontal") <= 0;
+        }
+        return Input.GetKeyUp(InputToCode[KeyInputs.Right]);
+    }
+    private bool IsAction() {
+        if (controller != -1) {
+            return Input.GetKeyDown("joystick " + controller + " button 0");
+        }
+        return Input.GetKeyDown(InputToCode[KeyInputs.Action]);
     }
 
-    public void FixedUpdate() {
-        float actualSpeed = DefaultMoveSpeed + ((float)PlayerData.NumberSpeeds * 0.444f * DefaultMoveSpeed);
-        if (PlayerData.IsSuperFast) {
-            actualSpeed = 100;
+    protected override void FixedUpdate() {
+        float actualSpeed = DefaultMoveSpeed + ((float)NumberSpeeds * 0.444f * DefaultMoveSpeed);
+        if (IsSuperFast) {
+            actualSpeed = 30;
         }
         if (moves.Count > 0) {
             LastMove = LastDirection;
-            Rigidbody.MovePosition(transform.position + LastDirection * actualSpeed * Time.deltaTime);
+            Rigidbody.MovePosition(transform.position + LastDirection * actualSpeed * Time.fixedDeltaTime);
         }
         if (IsOnIce) {
-            Rigidbody.MovePosition(transform.position + LastMove * actualSpeed * Time.deltaTime);
+            Rigidbody.MovePosition(transform.position + LastMove * actualSpeed * Time.fixedDeltaTime);
         }
-        
     }
-    internal void CheckTile() {
+    protected override void CheckTile() {
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
         IsOnIce = false;
         switch (tt.Type) {
             case TileType.Empty:
+                if (gameObject.layer == LayerMask.NameToLayer("FLYING"))
+                    return;
                 Debug.Log("Falling");
                 gameObject.layer = LayerMask.NameToLayer("FLYING");
                 Rigidbody.MovePosition(tt.GetCenter());
+                audioSource.PlayOneShot(PlayerData.FallSound);
+                PlayerData.Die();
                 StartCoroutine(Falling());
                 break;
             case TileType.Ice:
@@ -116,39 +191,47 @@ public class PlayerMove : MonoBehaviour {
                 break;
         }
     }
-    private IEnumerator Falling() {
-        float overtime = 1f;
-        while (transform.localScale.x > 0.01f) {
-            float modifier = 0.01f * overtime;
-            transform.localScale = new Vector3(transform.localScale.x - modifier * 0.981f * Time.fixedDeltaTime,
-                                                 transform.localScale.y - modifier * 0.981f * Time.fixedDeltaTime);
-            overtime += Time.fixedDeltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-        Destroy(this.gameObject);
-        yield return null;
-    }
+    //private IEnumerator Falling() {
+    //    float overtime = 1f;
+    //    while (transform.localScale.x > 0.01f) {
+    //        float modifier = 0.01f * overtime;
+    //        transform.localScale = new Vector3(transform.localScale.x - modifier * 9.81f * Time.fixedDeltaTime,
+    //                                             transform.localScale.y - modifier * 9.81f * Time.fixedDeltaTime);
+    //        overtime += Time.fixedDeltaTime;
+    //        yield return new WaitForEndOfFrame();
+    //    }
+    //    Destroy(this.gameObject);
+    //    yield return null;
+    //}
     private void OnBombExplode(Bomb b) {
         if (lastPlacedBomb == b)
             lastPlacedBomb = null;
         PlacedBombs--;
     }
+    internal void AddPowerUP(PowerUPType powerType) {
+        if (HasNegativEffect) {
+            powerUPTypeToAmount[lastEffect] = 0;
+        }
+        switch (powerType) {
+            case PowerUPType.Diarrhea:
+            case PowerUPType.Joint:
+            case PowerUPType.Superspeed:
+                audioSource.PlayOneShot(Array.Find<PlayerData.PowerUPSound>(PlayerData.powerUPsounds, x => x.type == powerType).clip);
+                break;
+            default:
+                audioSource.PlayOneShot(PlayerData.OtherPowerUPSound);
+                break;
+        }
+        powerUPTypeToAmount[powerType]++;
+        lastEffect = powerType;
+    }
     private void OnCollisionEnter2D(Collision2D collision) {
-        if (PlayerData.CanPushBombs == false)
+        if (CanPushBombs == false)
             return;
         Bomb b = collision.collider.GetComponent<Bomb>();
         if (b != null) {
             b.GetPushed(LastDirection);
         }
     }
-    //public void OnTriggerEnter2D(Collider2D collision) {
-    //    if(collision.name == "IceMap") {
-    //        IsOnIce = true;
-    //    }
-    //}
-    //public void OnTriggerExit2D(Collider2D collision) {
-    //    if (collision.name == "IceMap") {
-    //        IsOnIce = false;
-    //    }
-    //}
+    
 }

@@ -3,7 +3,10 @@ guid: e455e71db17a0f14e89e2c0cde948e86
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - OtherPowerUPSound: {fileID: 8300000, guid: 3c71ba0821819144f85b06412761618a, type: 3}
+  - FallSound: {fileID: 8300000, guid: 59837f404ac6e614eb7ea7b1c68db743, type: 3}
+  - audioSource: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -238,6 +238,10 @@ Preset:
     value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
+    propertyPath: CharacterGraphics.Array.data[0].Offset
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[1].AllSprites.Array.size
     value: 40
     objectReference: {fileID: 0}
@@ -444,6 +448,10 @@ Preset:
   - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[1].Character
     value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: CharacterGraphics.Array.data[1].Offset
+    value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[2].AllSprites.Array.size
@@ -654,6 +662,10 @@ Preset:
     value: 2
     objectReference: {fileID: 0}
   - target: {fileID: 0}
+    propertyPath: CharacterGraphics.Array.data[2].Offset
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[3].AllSprites.Array.size
     value: 40
     objectReference: {fileID: 0}
@@ -860,6 +872,10 @@ Preset:
   - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[3].Character
     value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: CharacterGraphics.Array.data[3].Offset
+    value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[4].AllSprites.Array.size
@@ -1070,6 +1086,10 @@ Preset:
     value: 4
     objectReference: {fileID: 0}
   - target: {fileID: 0}
+    propertyPath: CharacterGraphics.Array.data[4].Offset
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[5].AllSprites.Array.size
     value: 40
     objectReference: {fileID: 0}
@@ -1276,6 +1296,10 @@ Preset:
   - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[5].Character
     value: 5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: CharacterGraphics.Array.data[5].Offset
+    value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[6].AllSprites.Array.size
@@ -1486,6 +1510,10 @@ Preset:
     value: 6
     objectReference: {fileID: 0}
   - target: {fileID: 0}
+    propertyPath: CharacterGraphics.Array.data[6].Offset
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[7].AllSprites.Array.size
     value: 40
     objectReference: {fileID: 0}
@@ -1692,4 +1720,40 @@ Preset:
   - target: {fileID: 0}
     propertyPath: CharacterGraphics.Array.data[7].Character
     value: 7
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: CharacterGraphics.Array.data[7].Offset
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: Players.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: PlayerContent
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: PlayerSetterPrefab
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: PlayerGamePrefab
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: PlayerSettings.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: WinSlider
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: SuddenDeathSlider
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: StartGameButton
+    value: 
     objectReference: {fileID: 0}

@@ -5,13 +5,18 @@ using UnityEngine;
 
 public class Flyable : MonoBehaviour {
     protected SpriteRenderer Renderer;
+    private void Awake() {
+        Renderer = GetComponent<SpriteRenderer>();
+    }
     protected virtual void FixedUpdate() {
         if(isFlying) {
             double sqrt = Mathf.Pow(x, 2);
             float tempX2 = (float)(a * sqrt);
-            flySpeed = Mathf.Abs(tempX2 + b * x + (c));
+            flySpeed = 0.5f*Mathf.Abs(tempX2 + b * x + (c));
+            flySpeed = Mathf.Clamp(flySpeed, 1, int.MaxValue);
             x = -Mathf.Abs(Vector3.Distance(transform.position, flyTarget));
-            Renderer.transform.localScale = new Vector3(flySpeed,flySpeed,1);
+            Renderer.transform.localScale = new Vector3(Mathf.Clamp(flySpeed,1,int.MaxValue), 
+                                                        Mathf.Clamp(flySpeed, 1, int.MaxValue), 1);
             transform.position = Vector3.Slerp(transform.position, flyTarget, flyTime);
             flyTime += 0.5f*( flySpeed/Mathf.Abs(x) * Time.fixedDeltaTime);
         }
@@ -85,4 +90,17 @@ public class Flyable : MonoBehaviour {
         flyMove.Normalize();
         isFlying = true;
     }
+    public IEnumerator Falling() {
+        float overtime = 1f;
+        while (transform.localScale.x > 0.01f) {
+            float modifier = 0.01f * overtime;
+            transform.localScale = new Vector3(transform.localScale.x - modifier * 9.81f * Time.fixedDeltaTime,
+                                                 transform.localScale.y - modifier * 9.81f * Time.fixedDeltaTime);
+            overtime += Time.fixedDeltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        Destroy(this.gameObject);
+        yield return null;
+    }
+
 }

@@ -8,15 +8,20 @@ public class Blastbeam : MonoBehaviour {
     float StageTime;
     int Stages = 3;
     Sprite[] Sprites;
+
+    public Bomb Bomb { get; internal set; }
+
     void Start() {
         Renderer = GetComponent<SpriteRenderer>();
         StageTime = Timer / Stages;
         //Whatever mapcontroller will decide if anything happens
         MapController.Instance.DestroyBox(this.transform.position);
     }
-    public void Show(Sprite[] sprites) {
+    public void Show(Sprite[] sprites, Bomb bomb, bool playsound = false) {
         Stages--;
         Sprites = sprites;
+        this.Bomb = bomb;
+        Destroy(GetComponent<PolygonCollider2D>());
     }
     void Update() {
         Timer -= Time.deltaTime;

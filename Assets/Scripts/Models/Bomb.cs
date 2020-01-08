@@ -6,6 +6,7 @@ using UnityEngine;
 public class Bomb : Flyable {
 
     public CircleCollider2D HitBox { get; private set; }
+    public AudioClip fallingClip;
 
     public float explosionTimer=2.5f;
     int AnimationPos;
@@ -61,7 +62,7 @@ public class Bomb : Flyable {
 
     private void Explode() {
         Blastbeam middle = Instantiate(BombController.Instance.BlastbeamPrefab);
-        middle.Show(BombController.Instance.GetDirectionSprites(Direction.MIDDLE).EndSprites);
+        middle.Show(BombController.Instance.GetDirectionSprites(Direction.MIDDLE).EndSprites,this,true);
         Direction[] directions = new Direction[4] { Direction.DOWN, Direction.UP, Direction.LEFT, Direction.RIGHT };
         Vector3[] dirs = new Vector3[4] { Vector2.down, Vector2.up, Vector2.left, Vector2.right };
         middle.transform.position = transform.position;
@@ -73,12 +74,18 @@ public class Bomb : Flyable {
                     break;
                 }
                 Blastbeam beam = Instantiate(BombController.Instance.BlastbeamPrefab);
-                if(x == Strength-1) {
-                    beam.Show(BombController.Instance.GetDirectionSprites(directions[i]).EndSprites);
+                if (tt == TileType.Box) {
+                    x = Strength - 1;
+                }
+                if (x == Strength-1) {
+                    beam.Show(BombController.Instance.GetDirectionSprites(directions[i]).EndSprites, this);
                 } else {
-                    beam.Show(BombController.Instance.GetDirectionSprites(directions[i]).MiddleSprites);
+                    beam.Show(BombController.Instance.GetDirectionSprites(directions[i]).MiddleSprites, this);
                 }
                 beam.transform.position = pos;
+                if (tt == TileType.Box) {
+                    break;
+                }
             }
         }
         Destroy(this.gameObject);
@@ -105,9 +112,12 @@ public class Bomb : Flyable {
         }
         switch (tt.Type) {
             case TileType.Empty:
+                if (gameObject.layer == LayerMask.NameToLayer("FLYING"))
+                    return;
                 isFlying = true;
                 Debug.Log("Falling");
                 gameObject.layer = LayerMask.NameToLayer("FLYING");
+                GetComponent<AudioSource>().PlayOneShot(fallingClip);
                 StartCoroutine(Falling());
                 tile.Bomb = null;
                 break;
@@ -188,18 +198,6 @@ public class Bomb : Flyable {
         FlyToTarget(target);
         yield return null;
     }
-    private IEnumerator Falling() {
-        float overtime = 1f;
-        while (transform.localScale.x > 0.01f) {
-            float modifier = 0.01f * overtime;
-            transform.localScale = new Vector3(transform.localScale.x - modifier * 0.981f * Time.fixedDeltaTime,
-                                                 transform.localScale.y - modifier * 0.981f * Time.fixedDeltaTime);
-            overtime += Time.fixedDeltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-        Destroy(this.gameObject);
-        yield return null;
-    }
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.collider.GetComponent<PlayerData>() != null) {
             pushMove = Vector3.zero;
@@ -209,6 +207,7 @@ public class Bomb : Flyable {
         }
     }
     public void OnDestroy() {
+        tile.Bomb = null;
         OnDestroycb?.Invoke(this);
     }
 }
