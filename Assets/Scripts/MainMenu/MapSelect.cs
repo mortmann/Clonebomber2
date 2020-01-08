@@ -25,6 +25,14 @@ public class MapSelect : MonoBehaviour {
                 OnShow();
             }
         });
+        EventTrigger.Entry scroll = new EventTrigger.Entry {
+            eventID = EventTriggerType.Scroll
+        };
+        scroll.callback.AddListener((data) => {
+            ScrollRect sr = GetComponentInParent<ScrollRect>();
+            sr.verticalScrollbar.value += sr.scrollSensitivity*Time.deltaTime* ((PointerEventData)data).scrollDelta.y;
+        });
+        trigger.triggers.Add(scroll);
         trigger.triggers.Add(enter);
         MapSelection.Instance.SelectAll += SelectAll;
         MapSelection.Instance.UnselectAll += UnselectAll;
