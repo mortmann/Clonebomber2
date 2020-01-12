@@ -207,6 +207,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7606097217744428670}
   - component: {fileID: 2607862397018739633}
+  - component: {fileID: -5612872200902968852}
   m_Layer: 5
   m_Name: TeamScore
   m_TagString: Untagged
@@ -254,3 +255,23 @@ MonoBehaviour:
   PlayerParent: {fileID: 7606097216772177445}
   PlayerScorePrefab: {fileID: 2760640044401173345, guid: c92ed36e2d7219a428544e846d5e5270,
     type: 3}
+--- !u!114 &-5612872200902968852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7606097217744428671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 240
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1

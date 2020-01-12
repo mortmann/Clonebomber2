@@ -67,7 +67,7 @@
     <Compile Include="Assets\Scripts\Controller\MapController.cs" />
     <Compile Include="Assets\Scripts\Controller\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Controller\ScoreScreenController.cs" />
-    <Compile Include="Assets\Scripts\Controller\TriggerMapCollider.cs" />
+    <Compile Include="Assets\Scripts\GameScreen\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\MainMenu\MapSelect.cs" />
     <Compile Include="Assets\Scripts\MainMenu\MapSelection.cs" />
     <Compile Include="Assets\Scripts\MainMenu\Options.cs" />

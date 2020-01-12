@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Blastbeam : MonoBehaviour {
     SpriteRenderer Renderer;
-    private float Timer = .33f;
+    private float Timer = .5f;
     float StageTime;
     int Stages = 3;
     Sprite[] Sprites;

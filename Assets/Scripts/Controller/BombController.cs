@@ -50,20 +50,23 @@ public class BombController : MonoBehaviour {
     }
 
 
-    public Bomb PlaceBomb(Character type, Vector3 Position) {
+    public Bomb PlaceBomb(Character type, Vector3 Position, PlayerMove PlayerMove, bool overrideBombRestriktion) {
         MapTile mt = MapController.Instance.GetTile(Position);
-        if (mt.HasBomb)
+        if (mt.HasBomb&& overrideBombRestriktion==false)
             return null;
         Bomb bomb = Instantiate(BombPrefab);
         bomb.gameObject.layer = 8 + (int)type;
         bomb.transform.position = mt.GetCenter();// new Vector3(mt.x+0.5f,mt.y + 0.5f);
-        bomb.Set(BombSpritesList.Find(x => x.type == type).Sprites, PlayerController.Instance.characterToData[type].PlayerMove.Blastradius, type);
-        mt.Bomb = bomb;
-        bomb.OnDestroycb += (b) => { PlayExplodeSound(bomb); };
+        bomb.Set(BombSpritesList.Find(x => x.type == type).Sprites, PlayerMove.Blastradius, type);
+        if(mt.HasBomb==false)
+            mt.Bomb = bomb;
+        bomb.OnExplodecb += (b) => { PlayExplodeSound(bomb); };
         return bomb;
     }
 
     private void PlayExplodeSound(Bomb b) {
+        if (this == null)
+            return;
         GameObject go = new GameObject();
         AudioSource source = go.AddComponent<AudioSource>();
         source.PlayOneShot(explode);
@@ -72,7 +75,7 @@ public class BombController : MonoBehaviour {
         currentMagnitude = 1.75f;
         Shake = true;
     }
-
+    
     public BlastbeamSprites GetDirectionSprites(Direction dir) {
         return BlastbeamList.Find(x => x.type == dir);
     }

@@ -59,8 +59,9 @@ public class MapSelection : MonoBehaviour {
             if(SelectedMaps.Contains(name)==false)
                 SelectedMaps.Add(name);
         }
-        else
+        else {
             SelectedMaps.Remove(name);
+        }
         PlayerController.Instance.CheckStartButton();
         MapController.Instance?.LoadMap(name);
     }

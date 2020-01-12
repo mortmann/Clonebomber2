@@ -14,7 +14,9 @@ public class PlayerMove : Flyable {
     //string controllerActionKey = "joystick " + controller + " Horizontal";
     //string controllerActionKey = "joystick " + controller + " Vertical";
     List<Vector3> moves;
-    public float DefaultMoveSpeed = 2.25f;
+    public readonly float DefaultMoveSpeed = 2.1f;
+    //each speed upgrade is +1 and super speed +15
+    public float actualSpeed =>DefaultMoveSpeed + ((float)NumberSpeeds + DefaultMoveSpeed) +(IsSuperFast?15:0);
     int throwDistance = 4;
     const float BombCooldownTime = 0.177f;
     public Vector3 LastDirection => moves.Count>0 ? MovementSign * moves[0] :  Vector3.zero;
@@ -34,12 +36,24 @@ public class PlayerMove : Flyable {
     public bool HasNegativEffect => lastEffect == PowerUPType.Diarrhea || lastEffect == PowerUPType.Joint || lastEffect == PowerUPType.Superspeed;
     PowerUPType lastEffect;
 
-
     int MovementSign => HasInvertedControls ? -1 : 1;
+
+    internal Dictionary<PowerUPType, int> GetPowerUpsAfterDeath() {
+        foreach (PowerUPType put in startUpgrades.Keys) {
+            powerUPTypeToAmount[put] -= startUpgrades[put];
+        }
+        return powerUPTypeToAmount;
+    }
+
     Vector3 LastMove=Vector2.right;
     private bool IsOnIce;
     private Bomb lastPlacedBomb;
     float BombCooldown = 0.177f;
+
+    Dictionary<PowerUPType, int> startUpgrades = new Dictionary<PowerUPType, int> {
+        {PowerUPType.Bomb, 1 },
+        {PowerUPType.Blastradius,2 },
+    };
     void Start() {
         audioSource = GetComponent<AudioSource>();
         moves = new List<Vector3>();
@@ -48,10 +62,9 @@ public class PlayerMove : Flyable {
         powerUPTypeToAmount = new Dictionary<PowerUPType, int>();
         foreach (PowerUPType pt in Enum.GetValues(typeof(PowerUPType)))
             powerUPTypeToAmount[pt] = 0;
-
-        powerUPTypeToAmount[PowerUPType.Bomb] = 2;
-        powerUPTypeToAmount[PowerUPType.Blastradius] = 2;
-        powerUPTypeToAmount[PowerUPType.Push] = 2;
+        foreach(PowerUPType put in startUpgrades.Keys) {
+            powerUPTypeToAmount[put] = startUpgrades[put];
+        }
     }
     
     void Update() {
@@ -86,12 +99,16 @@ public class PlayerMove : Flyable {
             moves.Remove(Vector3.left);
         }
         if (IsAction() || HasDiarrhea) {
-            if (lastPlacedBomb!=null&& lastPlacedBomb.gameObject.layer == gameObject.layer) {
-                lastPlacedBomb.FlyToTarget(this.transform.position + LastMove * throwDistance,true);
+            if (CanThrowBombs&&lastPlacedBomb != null 
+                    && lastPlacedBomb == MapController.Instance.GetTile(transform.position).Bomb) {
+                lastPlacedBomb.ResetTile();
+                //not sure why it doesnt trigger while thrown
+                gameObject.layer = 0;
+                lastPlacedBomb.FlyToTarget(this.transform.position + LastMove * throwDistance, true);
             } else
             if (PlacedBombs < NumberBombs) {
                 BombCooldown = BombCooldownTime;
-                lastPlacedBomb = BombController.Instance.PlaceBomb(PlayerData.Character, transform.position);
+                lastPlacedBomb = BombController.Instance.PlaceBomb(PlayerData.Character, transform.position, this, true);
                 if (lastPlacedBomb != null) {
                     lastPlacedBomb.OnDestroycb += OnBombExplode;
                     PlacedBombs++;
@@ -160,10 +177,6 @@ public class PlayerMove : Flyable {
     }
 
     protected override void FixedUpdate() {
-        float actualSpeed = DefaultMoveSpeed + ((float)NumberSpeeds * 0.444f * DefaultMoveSpeed);
-        if (IsSuperFast) {
-            actualSpeed = 30;
-        }
         if (moves.Count > 0) {
             LastMove = LastDirection;
             Rigidbody.MovePosition(transform.position + LastDirection * actualSpeed * Time.fixedDeltaTime);
@@ -211,11 +224,13 @@ public class PlayerMove : Flyable {
     internal void AddPowerUP(PowerUPType powerType) {
         if (HasNegativEffect) {
             powerUPTypeToAmount[lastEffect] = 0;
+            PlayerData.customAnimator.SetNegativeEffect(false);
         }
         switch (powerType) {
             case PowerUPType.Diarrhea:
             case PowerUPType.Joint:
             case PowerUPType.Superspeed:
+                PlayerData.customAnimator.SetNegativeEffect(true);
                 audioSource.PlayOneShot(Array.Find<PlayerData.PowerUPSound>(PlayerData.powerUPsounds, x => x.type == powerType).clip);
                 break;
             default:

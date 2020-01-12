@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3928359479427403741}
   - component: {fileID: 8639040271424268243}
   - component: {fileID: 3732501799957287457}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155,7 +155,7 @@ GameObject:
   - component: {fileID: 5217070874518791650}
   - component: {fileID: 5217070874518791453}
   - component: {fileID: 2000026423}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40897e8ee40d3a54ab88a29b1c0eaee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerNumber: 0
   powerUPsounds:
   - type: 5
     clip: {fileID: 8300000, guid: 48ce3848926557444be24e51784f252d, type: 3}
@@ -252,11 +253,14 @@ MonoBehaviour:
   FallSound: {fileID: 8300000, guid: 59837f404ac6e614eb7ea7b1c68db743, type: 3}
   Team: 0
   Character: 1
+  IsDead: 0
   DeathClip: {fileID: 8300000, guid: d5c041e847e98c34f95228dab7ee814e, type: 3}
   OnDeadWalkedOver:
   - {fileID: 8300000, guid: 2650482777607934fa7ae642be4dac87, type: 3}
   - {fileID: 8300000, guid: a0ffe2293e0064746957787148d647fa, type: 3}
   CorpseplodeClip: {fileID: 8300000, guid: d9448f1fe83750a4d853aa9a194ba0fa, type: 3}
+  customAnimator: {fileID: 0}
+  audioSource: {fileID: 0}
   numberOfWins: 0
 --- !u!82 &2000026423
 AudioSource:

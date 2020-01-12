@@ -8,8 +8,7 @@ public class ScoreScreenController : MonoBehaviour {
     public AudioClip WinSound;
     public AudioClip GameOverSound;
 
-    public Transform PlayerScores;
-    public Transform TeamScores;
+    public Transform Scores;
     public PlayerScore PlayerScorePrefab;
     public TeamScore TeamScorePrefab;
 
@@ -18,6 +17,8 @@ public class ScoreScreenController : MonoBehaviour {
 
     public Text winText;
     public Text minuteSuddendeathText;
+    public Text hasWonText;
+    private bool GameWon;
 
     // Start is called before the first frame update
     void Start() {
@@ -35,39 +36,43 @@ public class ScoreScreenController : MonoBehaviour {
             }
         }
         if(teamToScore.Count>0) {
-            TeamScores.gameObject.SetActive(true);
-            PlayerScores.gameObject.SetActive(false);
+            //Scores.gameObject.SetActive(true);
+            //PlayerScores.gameObject.SetActive(false);
             foreach (Teams t in teamToScore.Keys) {
                 TeamScore TeamScore = Instantiate(TeamScorePrefab);
                 TeamScore.Show(playerDatas.FindAll(x => x.Team == t).ToArray());
-                TeamScore.transform.SetParent(TeamScores);
+                TeamScore.transform.SetParent(Scores);
             }
         } else {
-            TeamScores.gameObject.SetActive(false);
-            PlayerScores.gameObject.SetActive(true);
+            //TeamScores.gameObject.SetActive(false);
+            //PlayerScores.gameObject.SetActive(true);
             foreach (PlayerData pd in playerDatas) {
                 PlayerScore PlayerScore = Instantiate(PlayerScorePrefab);
                 PlayerScore.Show(pd.Character,pd.numberOfWins);
-                PlayerScore.transform.SetParent(PlayerScores);
+                PlayerScore.transform.SetParent(Scores);
             }
         }
-        bool win = false;
+        string WonText="";
+        GameWon = false;
         if(teamToScore.Count>0) {
             foreach (Teams t in teamToScore.Keys) {
                 if (teamToScore[t] == PlayerController.Instance.NumberOfWins) {
-                    Debug.Log(t + " wins!");
-                    win = true;
+                    WonText = t + " has won!";
+                    GameWon = true;
                 }
             }
         } else {
             foreach (PlayerData pd in PlayerController.Instance.Players) {
                 if(pd.numberOfWins == PlayerController.Instance.NumberOfWins) {
-                    Debug.Log(pd.Character+ " wins!");
-                    win = true;
+                    WonText = "Player "+ pd.PlayerNumber + " (" + pd.Character + ")\n has won!";
+                    GameWon = true;
                 }
             }
         }
-        if(win) {
+        if(GameWon) {
+            winText.gameObject.transform.parent.gameObject.SetActive(false);
+            hasWonText.gameObject.SetActive(true);
+            hasWonText.text = WonText;
             GetComponent<AudioSource>().PlayOneShot(GameOverSound);
             PressSpaceContinue.onClick.AddListener(ReturnMenu);
             PressESCtoQuit.onClick.AddListener(ReturnMenu);
@@ -84,17 +89,18 @@ public class ScoreScreenController : MonoBehaviour {
         SceneManager.LoadScene("GameScene");
     }
     private void ReturnMenu() {
-        foreach(PlayerData pd in FindObjectsOfType<PlayerData>()) {
-            Destroy(pd.gameObject);
-        }
+        Destroy(PlayerController.Instance.gameObject);
         SceneManager.LoadScene("MainMenu");
     }
     // Update is called once per frame
     void Update() {
         if(Input.GetKeyDown(KeyCode.Space)) {
-            NextRound();
-        } 
-        if(Input.GetKeyDown(KeyCode.Escape)) {
+            if(GameWon==false)
+                NextRound();
+            else
+                ReturnMenu();
+        }
+        if (Input.GetKeyDown(KeyCode.Escape)) {
             ReturnMenu();
         }
     }

@@ -6,6 +6,7 @@ using UnityEngine;
 public enum Character { Red, Blue, Green, Yellow, Spider, BSD, Tux, Snake }
 
 public class PlayerData : MonoBehaviour {
+    public int PlayerNumber;
     public PowerUPSound[] powerUPsounds;
     public AudioClip OtherPowerUPSound;
     public AudioClip FallSound;
@@ -19,8 +20,8 @@ public class PlayerData : MonoBehaviour {
 
     public int Controller { get; internal set; }
     public PlayerMove PlayerMove { get; internal set; }
-
-    AudioSource audioSource;
+    public CustomAnimator customAnimator;
+    public AudioSource audioSource;
     internal bool disabled;
     internal Dictionary<KeyInputs, KeyCode> inputToCode;
 
@@ -31,15 +32,21 @@ public class PlayerData : MonoBehaviour {
     void Start() {
         PlayerMove = GetComponent<PlayerMove>();
         audioSource = GetComponent<AudioSource>();
+        customAnimator = GetComponentInChildren<CustomAnimator>();
     }
+    
     public void Reset() {
-        GetComponentInChildren<CustomAnimator>().gameObject.SetActive(true);
-        if(GetComponent<PlayerMove>()==false)
+        customAnimator?.gameObject.SetActive(true);
+        customAnimator?.Reset();
+        if (GetComponent<PlayerMove>()==false)
             gameObject.AddComponent<PlayerMove>();
         IsDead = false;
+
+        GetComponent<CircleCollider2D>().isTrigger = false;
     }
 
     public void Set(PlayerSetter setter) {
+        PlayerNumber = setter.playerNumber;
         this.inputToCode = setter.inputToCode;
         this.Controller = setter.controller;
         this.disabled = setter.isDisabled;
@@ -47,20 +54,21 @@ public class PlayerData : MonoBehaviour {
         this.Team = setter.team;
     }
     public void OnTriggerEnter2D(Collider2D collider) {
-        if(IsDead == false && collider.GetComponent<Blastbeam>() != null) {
-            MapController.Instance.CreateAndFlyPowerUPs(PlayerMove.powerUPTypeToAmount,this);
-            Destroy(PlayerMove);
-            PlayerMove = null;
-            GetComponent<CircleCollider2D>().isTrigger = true;
-            audioSource.PlayOneShot(DeathClip);
-            killedByBomb = collider.GetComponent<Blastbeam>().Bomb;
-            Die();
-        }
-        if (IsDead && killedByBomb != collider.GetComponent<Blastbeam>().Bomb) {
-            //TODO: CREATE Chunks
-            Debug.Log(killedByBomb == collider.GetComponent<Blastbeam>().Bomb);
-            audioSource.PlayOneShot(CorpseplodeClip);
-            GetComponentInChildren<CustomAnimator>().gameObject.SetActive(false);
+        if(collider.GetComponent<Blastbeam>() != null) {
+            if(IsDead==false) {
+                MapController.Instance.CreateAndFlyPowerUPs(PlayerMove.GetPowerUpsAfterDeath(), this);
+                Destroy(PlayerMove);
+                PlayerMove = null;
+                GetComponent<CircleCollider2D>().isTrigger = true;
+                audioSource.PlayOneShot(DeathClip);
+                killedByBomb = collider.GetComponent<Blastbeam>().Bomb;
+                Die();
+            }
+            if (IsDead && killedByBomb != collider.GetComponent<Blastbeam>().Bomb) {
+                //TODO: CREATE Chunks
+                audioSource.PlayOneShot(CorpseplodeClip);
+                customAnimator.gameObject.SetActive(false);
+            }
         }
         if(IsDead && collider.GetComponent<PlayerMove>() != null) {
             audioSource.PlayOneShot(OnDeadWalkedOver[UnityEngine.Random.Range(0,OnDeadWalkedOver.Length)]);

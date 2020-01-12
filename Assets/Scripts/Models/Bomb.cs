@@ -17,9 +17,10 @@ public class Bomb : Flyable {
     private int Strength;
     Rigidbody2D Rigidbody;
     public Character PlacedByCharakter { get; private set; }
+    public Action<Bomb> OnExplodecb { get; internal set; }
     public Action<Bomb> OnDestroycb;
     Vector3 pushMove;
-    private float Speed = 1.6f;
+    private float Speed = 3f;
     MapController.MapTile tile;
     void Start() {
         Renderer = GetComponentInChildren<SpriteRenderer>();
@@ -33,11 +34,12 @@ public class Bomb : Flyable {
             }
             c2d.gameObject.layer = gameObject.layer;
         }
+        CheckTile();
     }
 
     override protected void FixedUpdate() {
         base.FixedUpdate();
-        if (isFlying)
+        if (isFlying||isBouncing)
             return;
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
         if (Vector3.Distance(transform.position,tt.GetCenter()) < pushMove.magnitude * Time.fixedDeltaTime * Speed){
@@ -88,6 +90,7 @@ public class Bomb : Flyable {
                 }
             }
         }
+        OnExplodecb?.Invoke(this);
         Destroy(this.gameObject);
     }
     internal void GetPushed(Vector3 direction) {
@@ -100,12 +103,35 @@ public class Bomb : Flyable {
         Strength = strength;
         PlacedByCharakter = charakter;
         tile = MapController.Instance.GetTile(transform.position);
-        CheckTile();
+        //CheckTile();
     }
+
+    internal void ResetTile() {
+        if(tile.Bomb==this) {
+            tile.Bomb = null;
+        }
+    }
+    //private void OnTriggerExit2D(Collider2D collision) {
+    //    Debug.Log(collision);
+    //    if (collision.gameObject.layer == gameObject.layer) {
+    //        collision.gameObject.layer = 0;
+    //    }
+    //}
     protected override void CheckTile() {
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
         if (tt.HasBomb && tt.Bomb != this) {
-            //TODO: BOUNCE
+            if(isThrown) {
+                Debug.Log("BOUNCE");
+                //go one move space over But on if Space
+                TileType nextType = MapController.Instance.GetTileTypeAt(tt.GetCenter() + flyMove);
+                if(nextType != TileType.Wall)
+                    FlyToTarget(tt.GetCenter() + flyMove,true); //go to next
+                else
+                    FlyToTarget(transform.position, true); //bounce
+            } else {
+                FlyToTarget(transform.position);
+                return;
+            }
         } else if(tt.HasBomb==false) {
             tile = tt;
             tile.Bomb = this;
@@ -122,11 +148,10 @@ public class Bomb : Flyable {
                 tile.Bomb = null;
                 break;
             case TileType.Hole:
-                explosionTimer = 0f; // need to be checked
+                explosionTimer = 12f;
                 transform.position = tt.GetCenter();
                 Renderer.gameObject.SetActive(false);
                 gameObject.layer = LayerMask.NameToLayer("FLYING");
-                Debug.Log("HOLE");
                 tile.Bomb = null;
                 StartCoroutine(Hole());
                 break;
@@ -165,37 +190,17 @@ public class Bomb : Flyable {
         if (pd != null) {
             explosionTimer = 0.05f;
         }
-        //if (collision.GetComponent<TriggerMapCollider>() != null) {
-        //    TileType tt = MapController.Instance.GetTileTypeAt(transform.position);
-        //    switch (tt) {
-        //        case TileType.Hole:
-        //            Renderer.gameObject.SetActive(false);
-        //            gameObject.layer = LayerMask.NameToLayer("FLYING");
-        //            //StartCoroutine(Hole());
-        //            break;
-        //        case TileType.ArrowUp:
-        //            pushMove = Vector3.up;
-        //            break;
-        //        case TileType.ArrowDown:
-        //            pushMove = Vector3.down;
-        //            break;
-        //        case TileType.ArrowLeft:
-        //            pushMove = Vector3.left;
-        //            break;
-        //        case TileType.ArrowRight:
-        //            pushMove = Vector3.right;
-        //            break;
-        //    }
-        //}
     }
     private IEnumerator Hole() {
-        float time = 0.34f;
+        float time = 0.2f;
         while (time > 0) {
             time -= Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
-        Vector2 target = MapController.Instance.GetRandomTargetTile(true,true);
+        Renderer.gameObject.SetActive(true);
+        Vector2 target = MapController.Instance.GetRandomTargetTile(transform.position, true, false);
         FlyToTarget(target);
+        explosionTimer = 0f; // need to be checked
         yield return null;
     }
     private void OnCollisionEnter2D(Collision2D collision) {

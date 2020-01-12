@@ -5,11 +5,11 @@ using UnityEngine;
 public class SuddenDeath : Flyable {
 
     public Vector2 target;
-    public Vector2 startPosition = new Vector2(9.5f,14.75f);
+    public Vector2 initialPosition = new Vector2(9.5f,14.75f);
     public AudioClip crunchClip;
     AudioSource audioSource;
     void Start() {
-        transform.position = startPosition;
+        transform.position = initialPosition;
         target = MapController.Instance.GetRandomTargetTile();
         FlyToTarget(target);
         audioSource = GetComponent<AudioSource>();

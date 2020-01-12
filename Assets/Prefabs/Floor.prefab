@@ -144,7 +144,6 @@ GameObject:
   - component: {fileID: 3860236992097800033}
   - component: {fileID: 3860236992097800046}
   - component: {fileID: 3860236992097800032}
-  - component: {fileID: 3860236992097800035}
   m_Layer: 0
   m_Name: TriggerObjects
   m_TagString: Untagged
@@ -265,18 +264,6 @@ TilemapRenderer:
   m_Mode: 0
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
---- !u!114 &3860236992097800035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3860236992097800044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c73ea2a124f2e145a6525ca80e5d898, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &3860236992377849782
 GameObject:
   m_ObjectHideFlags: 0

@@ -343,6 +343,22 @@ public class MapController : MonoBehaviour {
         pu.transform.position = new Vector3(0.5f,0.5f) + vector3Int;
     }
 
+    internal Vector2 GetRandomTargetTile(Vector3 notThis,bool nonWall = false, bool nonBox = false) {
+        List<MapTile> choose = new List<MapTile>(ListOfTiles);
+        choose.RemoveAll(x => x.Type == TileType.Empty);
+        choose.RemoveAll(x => x.GetCenter() == notThis);
+        if (nonWall) {
+            choose.RemoveAll(x => x.Type == TileType.Wall);
+        }
+        if (nonBox) {
+            choose.RemoveAll(x => x.Type == TileType.Box);
+        }
+        if (choose.Count == 0)
+            return notThis;
+        MapTile mt = choose[UnityEngine.Random.Range(0, choose.Count)];
+        return mt.GetCenter();
+    }
+
     internal Vector2 GetRandomTargetTile(bool nonWall=false, bool nonBox=false) {
         List<MapTile> choose = new List<MapTile>(ListOfTiles);
         choose.RemoveAll(x => x.Type == TileType.Empty);
@@ -353,7 +369,7 @@ public class MapController : MonoBehaviour {
             choose.RemoveAll(x => x.Type == TileType.Box);
         }
         MapTile mt = choose[UnityEngine.Random.Range(0, choose.Count)];
-        return new Vector2(mt.x, mt.y);
+        return mt.GetCenter();
     }
 
     internal void CreateAndFlyPowerUPs(Dictionary<PowerUPType, int> powerUPTypeToAmount, PlayerData pm) {

@@ -56,3 +56,6 @@ TagManager:
   - name: Player
     uniqueID: 2676862911
     locked: 0
+  - name: Flying
+    uniqueID: 248882451
+    locked: 0

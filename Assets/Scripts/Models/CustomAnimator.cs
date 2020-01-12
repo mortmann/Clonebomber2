@@ -15,22 +15,26 @@ public class CustomAnimator : MonoBehaviour {
     PlayerData PlayerData;
     int AnimationPos;
     float Timer;
+    bool negativeEffect = false;
     SpriteRenderer Renderer;
     Direction lastDirection = Direction.LEFT;
-    void Start() {
+    void OnEnable() {
         PlayerMove = GetComponentInParent<PlayerMove>();
         PlayerData = GetComponentInParent<PlayerData>();
         Renderer = GetComponent<SpriteRenderer>();
+        GetComponent<SpriteRenderer>().sprite = SpritesLeft[AnimationPos];
     }
 
     void Update() {
-        Timer += Time.deltaTime;
+        Timer += Time.deltaTime * (1+PlayerMove.actualSpeed-PlayerMove.DefaultMoveSpeed);
         if (Timer > AnimationSpeed) {
             AnimationPos++;
             AnimationPos %= NumberOfSprites;
             Timer = 0;
         }
         if(PlayerData.IsDead) {
+            if (PlayerMove.isFalling)
+                return;
             switch (lastDirection) {
                 case Direction.UP:
                     Renderer.sprite = SpritesDead[2];
@@ -63,6 +67,17 @@ public class CustomAnimator : MonoBehaviour {
             lastDirection = Direction.DOWN;
             Renderer.sprite = SpritesDown[AnimationPos];
         }
+        if(negativeEffect) {
+            transform.localScale = new Vector3(
+                Mathf.PingPong(Time.time* 1.5f, 0.3f)+ 0.85f,
+                Mathf.PingPong(Time.time* 1.5f, 0.3f)+ 0.85f,
+                0
+            );
+        }
+    }
+
+    internal void Reset() {
+        transform.localScale = new Vector3(1, 1, 1);
     }
 
     internal void SetSprites(PlayerController.CharacterSprites characterSprites) {
@@ -73,5 +88,9 @@ public class CustomAnimator : MonoBehaviour {
         SpritesDead = characterSprites.SpritesDead;
         transform.localPosition = new Vector3(0, characterSprites.Offset, 0);
         GetComponent<SpriteRenderer>().sprite = SpritesLeft[AnimationPos];
+    }
+
+    internal void SetNegativeEffect(bool has) {
+        negativeEffect = has;
     }
 }

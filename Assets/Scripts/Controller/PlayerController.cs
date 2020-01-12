@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 public enum Teams { NoTeam, Gold, Leaf, Blood, Water }
 public class PlayerController : MonoBehaviour {
-    public Dictionary<Character, PlayerData> characterToData;
+    public Dictionary<int, PlayerData> playerNumberToData;
     public static PlayerController Instance;
     public CharacterSprites[] CharacterGraphics;
     public List<PlayerData> Players;
@@ -69,28 +69,43 @@ public class PlayerController : MonoBehaviour {
                 SuddenDeathSlider.value = PlayerSaveData.timeToSuddenDeath;
             }
         }
-        characterToData = new Dictionary<Character, PlayerData>();
+        playerNumberToData = new Dictionary<int, PlayerData>();
         Players = new List<PlayerData>();
         foreach (PlayerData pd in FindObjectsOfType<PlayerData>()) {
-            characterToData[pd.Character] = pd;
+            playerNumberToData[pd.PlayerNumber] = pd;
             Players.Add(pd);
         }
         DontDestroyOnLoad(gameObject);
+        //SceneManager.activeSceneChanged += SceneChange;
     }
 
+    //private void SceneChange(Scene oldS, Scene newS) {
+    //    if(SceneManager.GetActiveScene().name=="MainMenu") {
+    //        foreach(PlayerData pd in Players) {
+    //            Destroy(pd.gameObject);
+    //        }
+    //    }
+    //}
+
+    private void OnDestroy() {
+        foreach (PlayerData pd in Players) {
+            if(pd!=null)
+                Destroy(pd.gameObject);
+        }
+    }
 
     public void CreatePlayers() {
         foreach (PlayerSetter ps in PlayerSettings) {
             if (ps.isDisabled)
                 continue;
             GameObject player = Instantiate(PlayerGamePrefab);
-            characterToData[ps.character] = player.GetComponent<PlayerData>();
-            characterToData[ps.character].Set(ps);
+            playerNumberToData[ps.playerNumber] = player.GetComponent<PlayerData>();
+            playerNumberToData[ps.playerNumber].Set(ps);
             //Destroy(player.GetComponent<PlayerMove>());
             //player.AddComponent<PlayerMove>();
             player.GetComponentInChildren<CustomAnimator>()
                 .SetSprites(Array.Find<CharacterSprites>(CharacterGraphics, x => x.Character == ps.character));
-            Players.Add(characterToData[ps.character]);
+            Players.Add(playerNumberToData[ps.playerNumber]);
             DontDestroyOnLoad(player);
         }
     }
@@ -112,6 +127,7 @@ public class PlayerController : MonoBehaviour {
         MapController.SetMap(GetNextMap());
         foreach(PlayerData pd in Players) {
             pd.Reset();
+            pd.gameObject.SetActive(true);
         }
         SuddenDeathTimer = SuddenDeathTimerStart;
     }
@@ -125,8 +141,9 @@ public class PlayerController : MonoBehaviour {
             Players[i].transform.position = spawnPoints[i].GetCenter();
         }
     }
+    float time;
     void Update() {
-        if (Players.Count == 0) {
+        if (Players.Count == 0|| SceneManager.GetActiveScene().name!="GameScene") {
             return;
         }
         bool GameOver=false;
@@ -139,11 +156,9 @@ public class PlayerController : MonoBehaviour {
             }
         }
         if(aliveTeams.Count() == 1) {
-            Debug.Log("Team win");
             GameOver = true;
         }
         if (Players.FindAll(x => x.IsDead == false).Count <= 1) {
-            Debug.Log("Player win");
             GameOver = true;
         }
         if(GameOver) {
@@ -152,6 +167,9 @@ public class PlayerController : MonoBehaviour {
                 return;
             List<PlayerData> pds = Players.FindAll(x => x.IsDead == false);
             pds.ForEach(x => x.numberOfWins++);
+            foreach (PlayerData pd in Players) {
+                pd.gameObject.SetActive(false);
+            }
             SceneManager.LoadScene("ScoreScene");
         }
         if (SuddenDeathTimer > 0) {

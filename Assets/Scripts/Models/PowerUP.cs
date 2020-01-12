@@ -18,16 +18,13 @@ public class PowerUP : Flyable {
             case TileType.Empty:
                 if (gameObject.layer == LayerMask.NameToLayer("FLYING"))
                     return;
-                isFlying = true;
-                Debug.Log("Falling");
                 gameObject.layer = LayerMask.NameToLayer("FLYING");
                 GetComponent<AudioSource>().PlayOneShot(fallingClip);
                 StartCoroutine(Falling());
                 break;
             }
         }
-                private void OnCollisionEnter2D(Collision2D collision) {
-        Debug.Log("OnCollisionEnter2D" + collision);
+    private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.collider.GetComponent<Blastbeam>() != null) {
             Destroy(this.gameObject);
         }

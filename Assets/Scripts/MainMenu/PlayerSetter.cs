@@ -15,6 +15,7 @@ public class PlayerSetter : MonoBehaviour {
     public Button LeftButton;
     public Button RightButton;
     public Button ActionButton;
+    public Button CharacterButton;
     public Image PlayerImage;
     
     public Color[] teamColors;
@@ -77,14 +78,22 @@ public class PlayerSetter : MonoBehaviour {
         LeftButton.onClick.AddListener(() => { WaitForKeyDown(KeyInputs.Left, LeftButton); });
         RightButton.onClick.AddListener(() => { WaitForKeyDown(KeyInputs.Right, RightButton); });
         ActionButton.onClick.AddListener(() => { WaitForKeyDown(KeyInputs.Action, ActionButton); });
+        CharacterButton.onClick.AddListener(() => { ChangeCharcter(); });
         controller = -1;
         if (isDisabled) {
+            InputDevicesDropDown.value = 0;
             OnValueChange(0);
         }
         else if (controller != -1) {
-            Debug.Log(controller);
+            InputDevicesDropDown.value = controller;
             OnValueChange(controller);
         }
+        InputDevicesDropDown.RefreshShownValue();
+    }
+
+    private void ChangeCharcter() {
+        character = (Character)((((int)character) + 1) % Enum.GetValues(typeof(Character)).Length);
+        PlayerImage.sprite = PlayerController.Instance.GetCharacterSprites(character).SpritesDown[0];
     }
 
     internal void Set(PlayerSetter.PlayerSettingSave playerSetter) {
