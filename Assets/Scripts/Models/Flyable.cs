@@ -24,7 +24,7 @@ public class Flyable : MonoBehaviour {
     public bool isFalling;
 
     private void Awake() {
-        Renderer = GetComponent<SpriteRenderer>();
+        Renderer = GetComponentInChildren<SpriteRenderer>();
     }
     protected virtual void FixedUpdate() {
         if (isFlying == false && isBouncing == false)
@@ -64,7 +64,7 @@ public class Flyable : MonoBehaviour {
             flyTime = 0;
             Renderer.sortingLayerName = oldLayer;
             isFlying = false;
-            transform.localScale = new Vector3(1, 1, 1);
+            Renderer.transform.localScale = new Vector3(1, 1, 1);
             gameObject.layer = LayerMask.NameToLayer("Default");
             CheckTile();
         }
@@ -74,7 +74,10 @@ public class Flyable : MonoBehaviour {
         
     }
 
-    public void FlyToTarget(Vector2 target, bool thrown = false) {
+    public void FlyToTarget(Vector2 target, bool thrown = false, bool center = false) {
+        if(Renderer==null)
+            Renderer = GetComponentInChildren<SpriteRenderer>();
+
         startPosition = transform.position;
         target = MapController.Instance.ClampVector(target);
         this.flyTarget = MapController.Instance.GetTile(target).GetCenter();
@@ -105,18 +108,21 @@ public class Flyable : MonoBehaviour {
         oldLayer = Renderer.sortingLayerName;
         Renderer.sortingLayerName = "Flying";
         isFlying = true;
+        if(center) {
+            x = x / 2f;
+        }
     }
     public IEnumerator Falling() {
         float overtime = 1f;
         isFalling = true;
-        while (transform.localScale.x > 0.01f) {
+        while (Renderer.transform.localScale.x > 0.01f) {
             float modifier = 0.01f * overtime;
-            transform.localScale = new Vector3(transform.localScale.x - modifier * 9.81f * Time.fixedDeltaTime,
-                                                 transform.localScale.y - modifier * 9.81f * Time.fixedDeltaTime);
+            Renderer.transform.localScale = new Vector3(Renderer.transform.localScale.x - modifier * 9.81f * Time.fixedDeltaTime,
+                                                 Renderer.transform.localScale.y - modifier * 9.81f * Time.fixedDeltaTime);
             overtime += Time.fixedDeltaTime;
             yield return new WaitForEndOfFrame();
         }
-        Destroy(this.gameObject);
+        Destroy(this);
         yield return null;
     }
 

@@ -53,6 +53,7 @@ public class PlayerMove : Flyable {
     Dictionary<PowerUPType, int> startUpgrades = new Dictionary<PowerUPType, int> {
         {PowerUPType.Bomb, 1 },
         {PowerUPType.Blastradius,2 },
+        {PowerUPType.Throw, 1 },
     };
     void Start() {
         audioSource = GetComponent<AudioSource>();
@@ -68,6 +69,8 @@ public class PlayerMove : Flyable {
     }
     
     void Update() {
+        if (isFalling || isFlying)
+            return;
         if (PlayerData.IsDead)
             return;
         if (IsUPDown()) {
@@ -176,7 +179,8 @@ public class PlayerMove : Flyable {
     }
 
     protected override void FixedUpdate() {
-        if (isFalling || isFlying)
+        base.FixedUpdate();
+        if (isFalling || isFlying) 
             return;
         if (moves.Count > 0) {
             LastMove = LastDirection;
@@ -198,7 +202,6 @@ public class PlayerMove : Flyable {
         if (HasNegativEffect == false)
             return;
         powerUPTypeToAmount[lastEffect] = 0;
-        PlayerData.customAnimator.SetNegativeEffect(false);
     }
 
     protected override void CheckTile() {
@@ -208,7 +211,6 @@ public class PlayerMove : Flyable {
             case TileType.Empty:
                 if (gameObject.layer == LayerMask.NameToLayer("FLYING"))
                     return;
-                Debug.Log("Falling");
                 gameObject.layer = LayerMask.NameToLayer("FLYING");
                 Rigidbody.MovePosition(tt.GetCenter());
                 audioSource.PlayOneShot(PlayerData.FallSound);
@@ -245,7 +247,6 @@ public class PlayerMove : Flyable {
             case PowerUPType.Diarrhea:
             case PowerUPType.Joint:
             case PowerUPType.Superspeed:
-                PlayerData.customAnimator.SetNegativeEffect(true);
                 audioSource.PlayOneShot(Array.Find<PlayerData.PowerUPSound>(PlayerData.powerUPsounds, x => x.type == powerType).clip);
                 NegativeEffectTimer = NegativeEffectTime;
                 break;

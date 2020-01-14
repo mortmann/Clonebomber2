@@ -38,7 +38,7 @@ public class Bomb : Flyable {
 
     override protected void FixedUpdate() {
         base.FixedUpdate();
-        if (isFlying||isBouncing)
+        if (isFlying||isBouncing||isFalling)
             return;
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
         if (Vector3.Distance(transform.position,tt.GetCenter()) < pushMove.magnitude * Time.fixedDeltaTime * Speed){
@@ -133,8 +133,7 @@ public class Bomb : Flyable {
             case TileType.Empty:
                 if (gameObject.layer == LayerMask.NameToLayer("FLYING"))
                     return;
-                isFlying = true;
-                Debug.Log("Falling");
+                isFalling = true;
                 gameObject.layer = LayerMask.NameToLayer("FLYING");
                 GetComponent<AudioSource>().PlayOneShot(fallingClip);
                 StartCoroutine(Falling());
@@ -207,6 +206,8 @@ public class Bomb : Flyable {
     public void OnDestroy() {
         tile.Bomb = null;
         OnDestroycb?.Invoke(this);
+        if (gameObject != null)
+            Destroy(gameObject);
     }
 
 }

@@ -11,7 +11,7 @@ public class SuddenDeath : Flyable {
     void Start() {
         transform.position = initialPosition;
         target = MapController.Instance.GetRandomTargetTile();
-        FlyToTarget(target);
+        FlyToTarget(target,false,true);
         audioSource = GetComponent<AudioSource>();
     }
 

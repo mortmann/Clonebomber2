@@ -15,7 +15,6 @@ public class CustomAnimator : MonoBehaviour {
     PlayerData PlayerData;
     int AnimationPos;
     float Timer;
-    bool negativeEffect = false;
     SpriteRenderer Renderer;
     Direction lastDirection = Direction.LEFT;
     void OnEnable() {
@@ -67,7 +66,7 @@ public class CustomAnimator : MonoBehaviour {
             lastDirection = Direction.DOWN;
             Renderer.sprite = SpritesDown[AnimationPos];
         }
-        if(negativeEffect) {
+        if(PlayerMove!=null&&PlayerMove.HasNegativEffect) {
             transform.localScale = new Vector3(
                 Mathf.PingPong(Time.time* 1.5f, 0.3f)+ 0.85f,
                 Mathf.PingPong(Time.time* 1.5f, 0.3f)+ 0.85f,
@@ -91,7 +90,4 @@ public class CustomAnimator : MonoBehaviour {
         GetComponent<SpriteRenderer>().sprite = SpritesLeft[AnimationPos];
     }
 
-    internal void SetNegativeEffect(bool has) {
-        negativeEffect = has;
-    }
 }

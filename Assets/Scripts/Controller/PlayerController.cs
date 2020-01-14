@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour {
     public CorpsePart corpsePartPrefab;
     SuddenDeath suddenDeath;
     private bool playedHurryUpWarning;
+    float time;
+    private MapController.MapTile[] spawnPoints;
 
     void Awake() {
         if (Instance != null)
@@ -80,7 +82,6 @@ public class PlayerController : MonoBehaviour {
     }
 
     internal void CreateCorpseParts(Vector3 position) {
-        Debug.Log("CHHHUUUUUNKES");
         for (int i = 0; i < 10; i++) {
             CorpsePart cp = Instantiate(corpsePartPrefab);
             cp.transform.position = position;
@@ -126,9 +127,12 @@ public class PlayerController : MonoBehaviour {
 
     internal void NextMap() {
         MapController.SetMap(GetNextMap());
-        foreach(PlayerData pd in Players) {
+        for (int i = 0; i < Players.Count; i++) {
+            PlayerData pd = Players[i]; 
             pd.Reset();
             pd.gameObject.SetActive(true);
+            pd.transform.position = new Vector3(9.5f, 7.5f);
+            //pd.PlayerMove.FlyToTarget(spawnPoints[i].GetCenter(), false, true);
         }
         SuddenDeathTimer = SuddenDeathTimerStart;
     }
@@ -138,11 +142,13 @@ public class PlayerController : MonoBehaviour {
         SuddenDeathSlider.GetComponentInChildren<Text>().text = "" + Mathf.Clamp((int)amount, 30, 300);
     }
     public void SetSpawnPosition(MapController.MapTile[] spawnPoints) {
+        this.spawnPoints = spawnPoints;
         for (int i = 0; i < Players.Count; i++) {
-            Players[i].transform.position = spawnPoints[i].GetCenter();
+            PlayerData pd = Players[i];
+            pd.PlayerMove.FlyToTarget(spawnPoints[i].GetCenter(), false, true);
         }
     }
-    float time;
+
     void Update() {
         if (Players.Count == 0|| SceneManager.GetActiveScene().name!="GameScene") {
             return;

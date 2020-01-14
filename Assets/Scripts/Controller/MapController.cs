@@ -136,7 +136,7 @@ public class MapController : MonoBehaviour {
         foreach (int i in dicSpawns.Keys) {
             Spawns[i] = dicSpawns[i];
         }
-        PlayerController.Instance?.SetSpawnPosition(Spawns);
+        PlayerController.Instance.SetSpawnPosition(Spawns);
         SetTileMaps();
     }
 

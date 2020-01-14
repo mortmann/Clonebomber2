@@ -36,6 +36,9 @@ public class PlayerData : MonoBehaviour {
     }
     
     public void Reset() {
+        PlayerMove = GetComponent<PlayerMove>();
+        audioSource = GetComponent<AudioSource>();
+        customAnimator = GetComponentInChildren<CustomAnimator>();
         customAnimator?.gameObject.SetActive(true);
         customAnimator?.Reset();
         if (GetComponent<PlayerMove>()==false)
