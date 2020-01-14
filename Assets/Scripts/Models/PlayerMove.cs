@@ -8,7 +8,6 @@ public class PlayerMove : Flyable {
 
     public AudioSource audioSource;
     public Dictionary<KeyInputs, KeyCode> InputToCode => PlayerData.inputToCode;
-
     public int controller=-1;
     //string controllerActionKey = "joystick " + controller + " button 0";
     //string controllerActionKey = "joystick " + controller + " Horizontal";
@@ -35,7 +34,8 @@ public class PlayerMove : Flyable {
     public bool IsSuperFast => powerUPTypeToAmount[PowerUPType.Superspeed] > 0;
     public bool HasNegativEffect => lastEffect == PowerUPType.Diarrhea || lastEffect == PowerUPType.Joint || lastEffect == PowerUPType.Superspeed;
     PowerUPType lastEffect;
-
+    readonly float NegativeEffectTime = 10f;
+    float NegativeEffectTimer;
     int MovementSign => HasInvertedControls ? -1 : 1;
 
     internal Dictionary<PowerUPType, int> GetPowerUpsAfterDeath() {
@@ -102,8 +102,7 @@ public class PlayerMove : Flyable {
             if (CanThrowBombs&&lastPlacedBomb != null 
                     && lastPlacedBomb == MapController.Instance.GetTile(transform.position).Bomb) {
                 lastPlacedBomb.ResetTile();
-                //not sure why it doesnt trigger while thrown
-                gameObject.layer = 0;
+                gameObject.layer = LayerMask.NameToLayer("Player");
                 lastPlacedBomb.FlyToTarget(this.transform.position + LastMove * throwDistance, true);
             } else
             if (PlacedBombs < NumberBombs) {
@@ -177,6 +176,8 @@ public class PlayerMove : Flyable {
     }
 
     protected override void FixedUpdate() {
+        if (isFalling || isFlying)
+            return;
         if (moves.Count > 0) {
             LastMove = LastDirection;
             Rigidbody.MovePosition(transform.position + LastDirection * actualSpeed * Time.fixedDeltaTime);
@@ -184,7 +185,22 @@ public class PlayerMove : Flyable {
         if (IsOnIce) {
             Rigidbody.MovePosition(transform.position + LastMove * actualSpeed * Time.fixedDeltaTime);
         }
+        if (NegativeEffectTimer > 0) {
+            NegativeEffectTimer -= Time.deltaTime;
+        }
+        if (NegativeEffectTimer < 0) {
+            NegativeEffectTimer = 0;
+            RemoveNegativeEffect();
+        }
     }
+
+    private void RemoveNegativeEffect() {
+        if (HasNegativEffect == false)
+            return;
+        powerUPTypeToAmount[lastEffect] = 0;
+        PlayerData.customAnimator.SetNegativeEffect(false);
+    }
+
     protected override void CheckTile() {
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
         IsOnIce = false;
@@ -223,8 +239,7 @@ public class PlayerMove : Flyable {
     }
     internal void AddPowerUP(PowerUPType powerType) {
         if (HasNegativEffect) {
-            powerUPTypeToAmount[lastEffect] = 0;
-            PlayerData.customAnimator.SetNegativeEffect(false);
+            RemoveNegativeEffect();
         }
         switch (powerType) {
             case PowerUPType.Diarrhea:
@@ -232,6 +247,7 @@ public class PlayerMove : Flyable {
             case PowerUPType.Superspeed:
                 PlayerData.customAnimator.SetNegativeEffect(true);
                 audioSource.PlayOneShot(Array.Find<PlayerData.PowerUPSound>(PlayerData.powerUPsounds, x => x.type == powerType).clip);
+                NegativeEffectTimer = NegativeEffectTime;
                 break;
             default:
                 audioSource.PlayOneShot(PlayerData.OtherPowerUPSound);
@@ -240,6 +256,7 @@ public class PlayerMove : Flyable {
         powerUPTypeToAmount[powerType]++;
         lastEffect = powerType;
     }
+
     private void OnCollisionEnter2D(Collision2D collision) {
         if (CanPushBombs == false)
             return;

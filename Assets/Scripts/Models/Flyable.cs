@@ -7,7 +7,8 @@ public class Flyable : MonoBehaviour {
     protected SpriteRenderer Renderer;
     protected bool isBouncing, isRising;
     float x, flyHeight;
-    private float flySpeed, maxFlySpeed = 9.81f;
+    protected float flySpeed;
+    protected readonly float maxFlySpeed = 19.81f;
     private float currDistance = 0;
     Vector3 heightParable;
     Vector3 flySpeedParable;
@@ -16,7 +17,7 @@ public class Flyable : MonoBehaviour {
     public bool isFlying { protected set; get; }
     public float flyTime { private set; get; }
     string oldLayer = "";
-    protected bool isThrown;
+    public bool isThrown;
     private Vector3 startPosition;
     float flyDistance;
     private float maxHeight = 3;
@@ -46,10 +47,15 @@ public class Flyable : MonoBehaviour {
             x = -Mathf.Abs(Vector3.Distance(transform.position, flyTarget));
 
             flyHeight = Mathf.Abs((heightParable.x * Mathf.Pow(x, 2)) + heightParable.y * x + (heightParable.z));
-            flySpeed = Mathf.Abs((flySpeedParable.x * Mathf.Pow(x, 2)) + flySpeedParable.y * x + (flySpeedParable.z));
             Renderer.transform.localScale = new Vector3(Mathf.Clamp(flyHeight, 1, int.MaxValue), 
                                                         Mathf.Clamp(flyHeight, 1, int.MaxValue), 1);
-            currDistance += flySpeed * Time.fixedDeltaTime;
+            if (BombController.Instance.ParableFlight) {
+                flySpeed = Mathf.Abs((flySpeedParable.x * Mathf.Pow(x, 2)) + flySpeedParable.y * x + (flySpeedParable.z));
+                currDistance += flySpeed * Time.fixedDeltaTime;
+            } else {
+                Debug.Log(5 / flyDistance);
+                currDistance += (5 / flyDistance) * Time.fixedDeltaTime;
+            }
             transform.position = Vector3.Lerp(startPosition, flyTarget, Mathf.Clamp01(currDistance / flyDistance));
         }
         if (isFlying && transform.position==flyTarget || isFlying==false && isBouncing == false) {
@@ -91,8 +97,7 @@ public class Flyable : MonoBehaviour {
 
         x = -Mathf.Abs(Vector3.Distance(transform.position, target));
         heightParable = GetParabel(new Vector2(0, 1), new Vector2(x / 2, maxHeight), new Vector2(x, 1));
-        flySpeedParable = GetParabel(new Vector2(0, maxFlySpeed), new Vector2(x / 2, 2), new Vector2(x, maxFlySpeed));
-        Debug.Log(heightParable);
+        flySpeedParable = GetParabel(new Vector2(0, maxFlySpeed), new Vector2(x / 2, 9.81f), new Vector2(x, maxFlySpeed));
         flyMove.x = target.x - transform.position.x;
         flyMove.y = target.y - transform.position.y;
         flyMove.Normalize();

@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Blastbeam : MonoBehaviour {
     SpriteRenderer Renderer;
-    private float Timer = .5f;
+    public static readonly float TimerTime = .5f;
+    private float Timer = TimerTime;
     float StageTime;
     int Stages = 3;
     Sprite[] Sprites;
@@ -15,7 +16,7 @@ public class Blastbeam : MonoBehaviour {
         Renderer = GetComponent<SpriteRenderer>();
         StageTime = Timer / Stages;
         //Whatever mapcontroller will decide if anything happens
-        MapController.Instance.DestroyBox(this.transform.position);
+        MapController.Instance.ExplodeBox(this.transform.position);
     }
     public void Show(Sprite[] sprites, Bomb bomb, bool playsound = false) {
         Stages--;
@@ -39,5 +40,8 @@ public class Blastbeam : MonoBehaviour {
 
     private void OnCollisionEnter2D(Collision2D collision) {
         
+    }
+    private void OnDestroy() {
+        MapController.Instance.RemoveExplodeBox(this.transform.position);
     }
 }

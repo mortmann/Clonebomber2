@@ -19,6 +19,7 @@ public class BombController : MonoBehaviour {
     private float magnitudeDecreaseFactor=3f;
 
     public bool Shake { get; private set; }
+    public bool ParableFlight = true;
 
     void Start() {
         normalCameraPos = Camera.main.transform.position;

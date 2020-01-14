@@ -76,6 +76,7 @@
     <Compile Include="Assets\Scripts\Models\Bomb.cs" />
     <Compile Include="Assets\Scripts\Models\BombTrigger.cs" />
     <Compile Include="Assets\Scripts\Models\Clock.cs" />
+    <Compile Include="Assets\Scripts\Models\CorpsePart.cs" />
     <Compile Include="Assets\Scripts\Models\CustomAnimator.cs" />
     <Compile Include="Assets\Scripts\Models\Flyable.cs" />
     <Compile Include="Assets\Scripts\Models\PlayerData.cs" />

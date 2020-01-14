@@ -15,6 +15,7 @@ public class MapController : MonoBehaviour {
     public static MapController Instance;
 
     public Tilemap floorMap;
+
     public Tilemap wallMap;
 
     public Tilemap boxMap;
@@ -274,13 +275,19 @@ public class MapController : MonoBehaviour {
         typeToTileBase[TileType.RandomBox] = randomBoxBase;
     }
 
-    internal void DestroyBox(Vector3 position) {
+    internal void ExplodeBox(Vector3 position) {
         TileType tt = Tiles[Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y)].Type;
         if (tt != TileType.Box)
             return;
         Vector3Int vector3Int = new Vector3Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), 0);
         boxMap.SetTile(vector3Int, typeToTileBase[TileType.ExplodedBox]);
-        StartCoroutine(RemoveDelayedTile(vector3Int, boxMap, TileType.Box));
+    }
+
+    internal void RemoveExplodeBox(Vector3 position) {
+        TileType tt = Tiles[Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y)].Type;
+        if (tt != TileType.Box)
+            return;
+        DestroyTile(position);
     }
 
     private IEnumerator RemoveDelayedTile(Vector3Int vector3Int, Tilemap map, TileType type) {
@@ -329,18 +336,35 @@ public class MapController : MonoBehaviour {
     }
 
     private void OnBoxDestroy(Vector3Int vector3Int) {
-        if (UnityEngine.Random.Range(0, 100) > 33) {
-            return;
+        int random = UnityEngine.Random.Range(0, 8);
+        PowerUPType put = PowerUPType.Blastradius;
+        switch (random) {
+            case 0:
+            case 1:
+            case 2:
+                //Speed, Blastradius, Bomb
+                put = (PowerUPType)random;
+                break;
+            case 3:
+                //Push, Throw
+                put = (PowerUPType)(random + UnityEngine.Random.Range(0, 2));
+                break;
+            case 4:
+                //Diarrhea, Joint, Superspeed
+                int negative = UnityEngine.Random.Range(0, 16);
+                if (negative > 2) {
+                    //no powereffect
+                    return;
+                }
+                put = (PowerUPType)5 + negative;
+                break;
+            default:
+                return;
         }
         PowerUP pu = Instantiate(PowerUPPrefab);
-        if(UnityEngine.Random.Range(0, 100)<25) {
-            PowerUPType put = (PowerUPType)5 + UnityEngine.Random.Range(0, 3);
-            pu.SetPowerType(put, powerUPtypeSprites.Find(x=>x.type==put).Sprite);
-        } else {
-            PowerUPType put = (PowerUPType)UnityEngine.Random.Range(0, 5);
-            pu.SetPowerType(put, powerUPtypeSprites.Find(x => x.type == put).Sprite);
-        }
-        pu.transform.position = new Vector3(0.5f,0.5f) + vector3Int;
+        pu.SetPowerType(put, powerUPtypeSprites.Find(x => x.type == put).Sprite);
+        pu.transform.position = new Vector3(0.5f, 0.5f) + vector3Int;
+        Tiles[vector3Int.x, vector3Int.y].Type = TileType.Floor;
     }
 
     internal Vector2 GetRandomTargetTile(Vector3 notThis,bool nonWall = false, bool nonBox = false) {

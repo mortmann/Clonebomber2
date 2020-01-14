@@ -58,22 +58,27 @@ public class MapSelection : MonoBehaviour {
         if(select) {
             if(SelectedMaps.Contains(name)==false)
                 SelectedMaps.Add(name);
+            ShowMap(name);
         }
         else {
+            int index = SelectedMaps.IndexOf(name);
             SelectedMaps.Remove(name);
+            if(SelectedMaps.Count>0) {
+                ShowMap(SelectedMaps[(index + 1) % SelectedMaps.Count]);
+            }
         }
         PlayerController.Instance.CheckStartButton();
-        MapController.Instance?.LoadMap(name);
     }
     void Update() {
         if (Input.GetKeyDown(KeyCode.S)) {
-            SelectAll?.Invoke();
             SelectedMaps.Clear();
-            SelectedMaps.AddRange(AllMaps);
+            SelectAll?.Invoke();
+            PlayerController.Instance.CheckStartButton();
         }
         if (Input.GetKeyDown(KeyCode.U)) {
             UnselectAll?.Invoke();
             SelectedMaps.Clear();
+            PlayerController.Instance.CheckStartButton();
         }
     }
 

@@ -74,6 +74,7 @@ public class CustomAnimator : MonoBehaviour {
                 0
             );
         }
+        Renderer.sortingOrder =Mathf.FloorToInt( 100000f - 1000f * transform.parent.position.y );
     }
 
     internal void Reset() {

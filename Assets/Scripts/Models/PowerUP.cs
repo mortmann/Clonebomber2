@@ -39,7 +39,8 @@ public class PowerUP : Flyable {
                 FlyToTarget(MapController.Instance.GetRandomTargetTile(true,true));
             }
             else {
-                Destroy(this.gameObject);
+                DestroyDelayed();
+                //Destroy(this.gameObject);
             }
         }
         if (collision.GetComponent<PlayerMove>() != null) {
@@ -47,7 +48,15 @@ public class PowerUP : Flyable {
             Destroy(this.gameObject);
         }
     }
-
+    private IEnumerator DestroyDelayed() {
+        float time = 0.5f;
+        while (time > 0) {
+            time -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        Destroy(this.gameObject);
+        yield return null;
+    }
     internal void SetPowerType(PowerUPType powerUPType, Sprite sprite) {
         PowerType = powerUPType;
         GetComponent<SpriteRenderer>().sprite = sprite;

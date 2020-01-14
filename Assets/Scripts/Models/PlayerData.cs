@@ -10,13 +10,13 @@ public class PlayerData : MonoBehaviour {
     public PowerUPSound[] powerUPsounds;
     public AudioClip OtherPowerUPSound;
     public AudioClip FallSound;
+    public AudioClip CorpseExplode;
 
     public Teams Team;
     public Character Character = Character.Blue;
     public bool IsDead = false;
     public AudioClip DeathClip;
     public AudioClip[] OnDeadWalkedOver;
-    public AudioClip CorpseplodeClip;
 
     public int Controller { get; internal set; }
     public PlayerMove PlayerMove { get; internal set; }
@@ -40,8 +40,9 @@ public class PlayerData : MonoBehaviour {
         customAnimator?.Reset();
         if (GetComponent<PlayerMove>()==false)
             gameObject.AddComponent<PlayerMove>();
+        PlayerMove = GetComponent<PlayerMove>();
         IsDead = false;
-
+        gameObject.layer = LayerMask.NameToLayer("Player");
         GetComponent<CircleCollider2D>().isTrigger = false;
     }
 
@@ -62,11 +63,12 @@ public class PlayerData : MonoBehaviour {
                 GetComponent<CircleCollider2D>().isTrigger = true;
                 audioSource.PlayOneShot(DeathClip);
                 killedByBomb = collider.GetComponent<Blastbeam>().Bomb;
+                gameObject.layer = LayerMask.NameToLayer("Default");
                 Die();
-            }
-            if (IsDead && killedByBomb != collider.GetComponent<Blastbeam>().Bomb) {
-                //TODO: CREATE Chunks
-                audioSource.PlayOneShot(CorpseplodeClip);
+            } else
+            if (IsDead && killedByBomb != collider.GetComponent<Blastbeam>().Bomb&& customAnimator.gameObject.activeSelf) {
+                PlayerController.Instance.CreateCorpseParts(transform.position);
+                audioSource.PlayOneShot(CorpseExplode);
                 customAnimator.gameObject.SetActive(false);
             }
         }

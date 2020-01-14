@@ -5441,6 +5441,8 @@ MonoBehaviour:
     type: 3}
   suddenDeathPrefab: {fileID: 6976224317657604840, guid: 732d950ca1b073146b35699048b73797,
     type: 3}
+  corpsePartPrefab: {fileID: 3336668781428098171, guid: 47cc0f6c8f3496b40919e429df1474f5,
+    type: 3}
 --- !u!4 &1121249501
 Transform:
   m_ObjectHideFlags: 0

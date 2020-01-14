@@ -33,8 +33,8 @@ public class PlayerController : MonoBehaviour {
     PlayerSave PlayerSaveData;
 
     public AudioClip hurryUpSuddenDeathClip;
-
     public SuddenDeath suddenDeathPrefab;
+    public CorpsePart corpsePartPrefab;
     SuddenDeath suddenDeath;
     private bool playedHurryUpWarning;
 
@@ -79,13 +79,14 @@ public class PlayerController : MonoBehaviour {
         //SceneManager.activeSceneChanged += SceneChange;
     }
 
-    //private void SceneChange(Scene oldS, Scene newS) {
-    //    if(SceneManager.GetActiveScene().name=="MainMenu") {
-    //        foreach(PlayerData pd in Players) {
-    //            Destroy(pd.gameObject);
-    //        }
-    //    }
-    //}
+    internal void CreateCorpseParts(Vector3 position) {
+        Debug.Log("CHHHUUUUUNKES");
+        for (int i = 0; i < 10; i++) {
+            CorpsePart cp = Instantiate(corpsePartPrefab);
+            cp.transform.position = position;
+            cp.FlyToTarget(MapController.Instance.GetRandomTargetTile());
+        }
+    }
 
     private void OnDestroy() {
         foreach (PlayerData pd in Players) {
@@ -157,11 +158,13 @@ public class PlayerController : MonoBehaviour {
         }
         if(aliveTeams.Count() == 1) {
             GameOver = true;
+            Debug.Log("aliveTeams.Count()");
         }
+
         if (Players.FindAll(x => x.IsDead == false).Count <= 1) {
             GameOver = true;
         }
-        if(GameOver) {
+        if (GameOver) {
             waitForGameOver -= Time.deltaTime;
             if (waitForGameOver > 0)
                 return;

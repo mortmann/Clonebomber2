@@ -44,7 +44,7 @@ public class MapSelect : MonoBehaviour {
     }
 
     private void SelectAll() {
-        Select(false);
+        Select(true);
     }
     private void UnselectAll() {
         Unselect();
@@ -58,7 +58,8 @@ public class MapSelect : MonoBehaviour {
     }
     public void Select(bool trigger) {
         selected = true;
-        if(trigger)
+        MapSelection.Instance.ShowMap(mapName);
+        if (trigger)
             OnSelect?.Invoke(mapName, true);
         GetComponent<Image>().color = selectedColor;
     }

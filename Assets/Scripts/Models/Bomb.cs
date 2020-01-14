@@ -20,15 +20,14 @@ public class Bomb : Flyable {
     public Action<Bomb> OnExplodecb { get; internal set; }
     public Action<Bomb> OnDestroycb;
     Vector3 pushMove;
-    private float Speed = 3f;
+    private float Speed = 20f;
     MapController.MapTile tile;
     void Start() {
         Renderer = GetComponentInChildren<SpriteRenderer>();
         HitBox = GetComponent<CircleCollider2D>();
         Rigidbody = GetComponent<Rigidbody2D>();
-
         Collider2D[] c2ds = Physics2D.OverlapCircleAll(transform.position, HitBox.radius);
-        foreach(Collider2D c2d in c2ds) {
+        foreach (Collider2D c2d in c2ds) {
             if (c2d.GetComponent<PlayerMove>() == null) {
                 continue;
             }
@@ -103,7 +102,6 @@ public class Bomb : Flyable {
         Strength = strength;
         PlacedByCharakter = charakter;
         tile = MapController.Instance.GetTile(transform.position);
-        //CheckTile();
     }
 
     internal void ResetTile() {
@@ -111,12 +109,7 @@ public class Bomb : Flyable {
             tile.Bomb = null;
         }
     }
-    //private void OnTriggerExit2D(Collider2D collision) {
-    //    Debug.Log(collision);
-    //    if (collision.gameObject.layer == gameObject.layer) {
-    //        collision.gameObject.layer = 0;
-    //    }
-    //}
+
     protected override void CheckTile() {
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
         if (tt.HasBomb && tt.Bomb != this) {
@@ -215,4 +208,5 @@ public class Bomb : Flyable {
         tile.Bomb = null;
         OnDestroycb?.Invoke(this);
     }
+
 }

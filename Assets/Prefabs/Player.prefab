@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3928359479427403741}
   - component: {fileID: 8639040271424268243}
   - component: {fileID: 3732501799957287457}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155,7 +155,7 @@ GameObject:
   - component: {fileID: 5217070874518791650}
   - component: {fileID: 5217070874518791453}
   - component: {fileID: 2000026423}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,9 +189,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e455e71db17a0f14e89e2c0cde948e86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isThrown: 0
+  isFalling: 0
   audioSource: {fileID: 0}
   controller: -1
-  DefaultMoveSpeed: 2.25
 --- !u!58 &5217070874518791648
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -251,6 +252,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 66e4c5127ccc8014b8b2bd858a3f44f8, type: 3}
   OtherPowerUPSound: {fileID: 8300000, guid: 3c71ba0821819144f85b06412761618a, type: 3}
   FallSound: {fileID: 8300000, guid: 59837f404ac6e614eb7ea7b1c68db743, type: 3}
+  CorpseExplode: {fileID: 8300000, guid: d9448f1fe83750a4d853aa9a194ba0fa, type: 3}
   Team: 0
   Character: 1
   IsDead: 0
