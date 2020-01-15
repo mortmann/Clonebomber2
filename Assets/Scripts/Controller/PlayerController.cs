@@ -116,6 +116,7 @@ public class PlayerController : MonoBehaviour {
         MapSelection mp = FindObjectOfType<MapSelection>();
         SelectedMaps = mp.SelectedMaps;
         CreatePlayers();
+        MapController.SetMap(GetNextMap());
         NextMap();
         SceneManager.LoadScene("GameScene");
     }
@@ -126,7 +127,6 @@ public class PlayerController : MonoBehaviour {
     }
 
     internal void NextMap() {
-        MapController.SetMap(GetNextMap());
         for (int i = 0; i < Players.Count; i++) {
             PlayerData pd = Players[i]; 
             pd.Reset();
@@ -179,6 +179,7 @@ public class PlayerController : MonoBehaviour {
             foreach (PlayerData pd in Players) {
                 pd.gameObject.SetActive(false);
             }
+            MapController.SetMap(GetNextMap());
             SceneManager.LoadScene("ScoreScene");
         }
         if (SuddenDeathTimer > 0) {

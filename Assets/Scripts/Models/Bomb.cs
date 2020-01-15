@@ -8,7 +8,7 @@ public class Bomb : Flyable {
     public CircleCollider2D HitBox { get; private set; }
     public AudioClip fallingClip;
 
-    public float explosionTimer=2.5f;
+    public float explosionTimer = 2.5f;
     int AnimationPos;
     public float AnimationSpeed = 0.33f;
     int NumberOfSprites = 4;
@@ -20,7 +20,7 @@ public class Bomb : Flyable {
     public Action<Bomb> OnExplodecb { get; internal set; }
     public Action<Bomb> OnDestroycb;
     Vector3 pushMove;
-    private float Speed = 20f;
+    private float Speed = 4f;
     MapController.MapTile tile;
     void Start() {
         Renderer = GetComponentInChildren<SpriteRenderer>();

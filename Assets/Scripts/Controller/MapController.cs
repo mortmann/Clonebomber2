@@ -55,7 +55,7 @@ public class MapController : MonoBehaviour {
         return File.ReadAllLines(Path.Combine(Application.streamingAssetsPath, "Maps", map+".map"));
     }
 
-    static string loadMap = "Hole_Run";
+    static string loadMap;
 
     void Start() {
         Instance = this;
@@ -68,7 +68,8 @@ public class MapController : MonoBehaviour {
         }
         ListOfTiles = new List<MapTile>();
         LoadTileBases();
-        LoadMap(loadMap);
+        if(loadMap != null)
+            LoadMap(loadMap);
     }
 
     void Update() {

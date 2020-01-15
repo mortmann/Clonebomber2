@@ -22,6 +22,7 @@ public class Flyable : MonoBehaviour {
     float flyDistance;
     private float maxHeight = 3;
     public bool isFalling;
+    private int oldGameObjectLayer;
 
     private void Awake() {
         Renderer = GetComponentInChildren<SpriteRenderer>();
@@ -44,19 +45,19 @@ public class Flyable : MonoBehaviour {
                                             Mathf.Clamp(flyHeight, 1, 4), 1);
         }
         if (isFlying) {
-            x = -Mathf.Abs(Vector3.Distance(transform.position, flyTarget));
-
+            x = flyDistance - Mathf.Abs(Vector3.Distance(transform.position, flyTarget));
             flyHeight = Mathf.Abs((heightParable.x * Mathf.Pow(x, 2)) + heightParable.y * x + (heightParable.z));
-            Renderer.transform.localScale = new Vector3(Mathf.Clamp(flyHeight, 1, int.MaxValue), 
+            Renderer.transform.localScale = new Vector3(Mathf.Clamp(flyHeight, 1, int.MaxValue),
                                                         Mathf.Clamp(flyHeight, 1, int.MaxValue), 1);
+
             if (BombController.Instance.ParableFlight) {
                 flySpeed = Mathf.Abs((flySpeedParable.x * Mathf.Pow(x, 2)) + flySpeedParable.y * x + (flySpeedParable.z));
                 currDistance += flySpeed * Time.fixedDeltaTime;
             } else {
-                Debug.Log(5 / flyDistance);
-                currDistance += (5 / flyDistance) * Time.fixedDeltaTime;
+                currDistance += (flyDistance / flyDistance) * Time.fixedDeltaTime;
             }
             transform.position = Vector3.Lerp(startPosition, flyTarget, Mathf.Clamp01(currDistance / flyDistance));
+            //transform.position = Vector3.MoveTowards(transform.position, flyTarget, 5 * Time.fixedDeltaTime);
         }
         if (isFlying && transform.position==flyTarget || isFlying==false && isBouncing == false) {
             Vector2 clamp = MapController.Instance.ClampVector(transform.position);
@@ -65,7 +66,7 @@ public class Flyable : MonoBehaviour {
             Renderer.sortingLayerName = oldLayer;
             isFlying = false;
             Renderer.transform.localScale = new Vector3(1, 1, 1);
-            gameObject.layer = LayerMask.NameToLayer("Default");
+            gameObject.layer = oldGameObjectLayer;
             CheckTile();
         }
     }
@@ -77,15 +78,15 @@ public class Flyable : MonoBehaviour {
     public void FlyToTarget(Vector2 target, bool thrown = false, bool center = false) {
         if(Renderer==null)
             Renderer = GetComponentInChildren<SpriteRenderer>();
-
         startPosition = transform.position;
+        oldGameObjectLayer = gameObject.layer;
         target = MapController.Instance.ClampVector(target);
         this.flyTarget = MapController.Instance.GetTile(target).GetCenter();
         if(flyTarget == transform.position) {
             isBouncing = true;
             isRising = true;
-            gameObject.layer = LayerMask.NameToLayer("FLYING");
             oldLayer = Renderer.sortingLayerName;
+            gameObject.layer = LayerMask.NameToLayer("FLYING");
             Renderer.sortingLayerName = "Flying";
             return;
         }
@@ -98,19 +99,18 @@ public class Flyable : MonoBehaviour {
         }
         flyDistance = Mathf.Abs(Vector3.Distance(transform.position, flyTarget));
 
-        x = -Mathf.Abs(Vector3.Distance(transform.position, target));
+        x = Mathf.Abs(Vector3.Distance(startPosition, target));
         heightParable = GetParabel(new Vector2(0, 1), new Vector2(x / 2, maxHeight), new Vector2(x, 1));
         flySpeedParable = GetParabel(new Vector2(0, maxFlySpeed), new Vector2(x / 2, 9.81f), new Vector2(x, maxFlySpeed));
+
         flyMove.x = target.x - transform.position.x;
         flyMove.y = target.y - transform.position.y;
         flyMove.Normalize();
+
         currDistance = 0;
         oldLayer = Renderer.sortingLayerName;
         Renderer.sortingLayerName = "Flying";
         isFlying = true;
-        if(center) {
-            x = x / 2f;
-        }
     }
     public IEnumerator Falling() {
         float overtime = 1f;
