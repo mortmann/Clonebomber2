@@ -44,20 +44,21 @@ public class MapController : MonoBehaviour {
     MapTile[,] Tiles;
     List<MapTile> ListOfTiles;
     MapTile[] Spawns;
-    int maxX = 18;
-    int maxY = 14;
+    public static readonly int maxX = 18;
+    public static readonly int maxY = 14;
 
     internal Vector2 ClampVector(Vector2 target) {
         return new Vector2(Mathf.Clamp(target.x, 0, maxX), Mathf.Clamp(target.y, 0, maxY));
     }
 
-    internal string[] GetMapFile(string map) {
+    public static string[] GetMapFile(string map) {
         return File.ReadAllLines(Path.Combine(Application.streamingAssetsPath, "Maps", map+".map"));
     }
+    public static string[] GetMapTileFileStrings(string map) {
+        return GetMapFile(map).Skip(2).ToArray();
+    }
 
-    static string loadMap;
-
-    void Start() {
+    void Awake() {
         Instance = this;
         typeToTileBase = new Dictionary<TileType, Tile>();
         Tiles = new MapTile[maxX+1, maxY+1];
@@ -68,14 +69,18 @@ public class MapController : MonoBehaviour {
         }
         ListOfTiles = new List<MapTile>();
         LoadTileBases();
-        if(loadMap != null)
-            LoadMap(loadMap);
+        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name=="GameScene") {
+            LoadMap(PlayerController.Instance.NextMapString,true);
+        }
     }
 
     void Update() {
+        if (Input.GetKeyDown(KeyCode.Delete)) {
+            DestroyTile(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        }
     }
 
-    public void LoadMap(string name) {
+    public void LoadMap(string name, bool setSpawns) {
         floorMap.ClearAllTiles();
         wallMap.ClearAllTiles();
         boxMap.ClearAllTiles();
@@ -91,43 +96,47 @@ public class MapController : MonoBehaviour {
             string line = allLines[i];
             int x = 1; //because outer layer be empty
             foreach (char c in line) {
-                if (c == '-') {
-                    Tiles[x, y] = new MapTile(TileType.Empty,x,y);
-                }
-                else if (c == ' ') {
-                    Tiles[x, y] = new MapTile(TileType.Floor, x, y);
-                }
-                else if (c == '*') {
-                    Tiles[x, y] = new MapTile(TileType.Wall, x, y);
-                }
-                else if (c == '+') {
-                    Tiles[x, y] = new MapTile(TileType.Box, x, y); 
-                }
-                else if (c == 'v') {
-                    Tiles[x, y] = new MapTile(TileType.ArrowDown, x, y); 
-                }
-                else if (c == '^') {
-                    Tiles[x, y] = new MapTile(TileType.ArrowUp, x, y); 
-                }
-                else if (c == '>') {
-                    Tiles[x, y] = new MapTile(TileType.ArrowRight, x, y);
-                }
-                else if (c == '<') {
-                    Tiles[x, y] = new MapTile(TileType.ArrowLeft, x, y);
-                }
-                else if (c == 'S') {
-                    Tiles[x, y] = new MapTile(TileType.Ice, x, y); 
-                }
-                else if (c == 'o') {
-                    Tiles[x, y] = new MapTile(TileType.Hole, x, y); 
-                }
-                else if (c == 'R') {
-                    Tiles[x, y] = new MapTile(TileType.RandomBox, x, y); 
-                }
-                else if (Char.IsDigit(c)) {
-                    Tiles[x, y] = new MapTile(TileType.Spawn, x, y); 
+                Tiles[x, y] = new MapTile(MapTile.ConvertChar(c), x, y);
+                if(Tiles[x, y].Type==TileType.Spawn) {
                     dicSpawns[int.Parse("" + c)] = Tiles[x, y];
                 }
+                //if (c == '-') {
+                //    Tiles[x, y] = new MapTile(TileType.Empty,x,y);
+                //}
+                //else if (c == ' ') {
+                //    Tiles[x, y] = new MapTile(TileType.Floor, x, y);
+                //}
+                //else if (c == '*') {
+                //    Tiles[x, y] = new MapTile(TileType.Wall, x, y);
+                //}
+                //else if (c == '+') {
+                //    Tiles[x, y] = new MapTile(TileType.Box, x, y); 
+                //}
+                //else if (c == 'v') {
+                //    Tiles[x, y] = new MapTile(TileType.ArrowDown, x, y); 
+                //}
+                //else if (c == '^') {
+                //    Tiles[x, y] = new MapTile(TileType.ArrowUp, x, y); 
+                //}
+                //else if (c == '>') {
+                //    Tiles[x, y] = new MapTile(TileType.ArrowRight, x, y);
+                //}
+                //else if (c == '<') {
+                //    Tiles[x, y] = new MapTile(TileType.ArrowLeft, x, y);
+                //}
+                //else if (c == 'S') {
+                //    Tiles[x, y] = new MapTile(TileType.Ice, x, y); 
+                //}
+                //else if (c == 'o') {
+                //    Tiles[x, y] = new MapTile(TileType.Hole, x, y); 
+                //}
+                //else if (c == 'R') {
+                //    Tiles[x, y] = new MapTile(TileType.RandomBox, x, y); 
+                //}
+                //else if (Char.IsDigit(c)) {
+                //    Tiles[x, y] = new MapTile(TileType.Spawn, x, y); 
+                //    dicSpawns[int.Parse("" + c)] = Tiles[x, y];
+                //}
                 ListOfTiles.Add(Tiles[x, y]);
                 x++;
             }
@@ -137,12 +146,9 @@ public class MapController : MonoBehaviour {
         foreach (int i in dicSpawns.Keys) {
             Spawns[i] = dicSpawns[i];
         }
-        PlayerController.Instance.SetSpawnPosition(Spawns);
+        if(setSpawns)
+            PlayerController.Instance.SetSpawnPosition(new List<MapTile>( Spawns ));
         SetTileMaps();
-    }
-
-    internal static void SetMap(string map) {
-        loadMap = map;
     }
 
     internal TileType GetTileTypeAt(Vector3 pos) {
@@ -173,7 +179,7 @@ public class MapController : MonoBehaviour {
                         break;
                     case TileType.RandomBox:
                         if (previewMap == null) {
-                            if (UnityEngine.Random.Range(0, 2) == 0) {
+                            if (UnityEngine.Random.Range(0, 3) > 0) { //66.6666%
                                 boxMap.SetTile(new Vector3Int(x, y, 0), typeToTileBase[TileType.Box]);
                                 Tiles[x, y].Type = TileType.Box;
                             }
@@ -408,6 +414,16 @@ public class MapController : MonoBehaviour {
         }
     }
 
+    public static List<string> GetAllMapNames() {
+        List<string> AllMaps = new List<string> ();
+        string path = Path.Combine(Application.streamingAssetsPath, "Maps");
+        string[] files = Directory.GetFiles(path, "*.map");
+        foreach (string file in files) {
+            AllMaps.Add(Path.GetFileNameWithoutExtension(file));
+        }
+        return AllMaps;
+    }
+
     [Serializable]
     public struct TypeSprites {
         public MapType type;
@@ -426,7 +442,7 @@ public class MapController : MonoBehaviour {
         public readonly int y;
         public TileType Type;
         public Bomb Bomb;
-        public bool HasBomb => Bomb!=null;
+        public bool HasBomb => Bomb != null;
         public MapTile(TileType type, int x, int y) {
             this.x = x;
             this.y = y;
@@ -437,6 +453,38 @@ public class MapController : MonoBehaviour {
 
         internal Vector3 GetCenter() {
             return new Vector3(x + 0.5f, y + 0.5f);
+        }
+        public static TileType ConvertChar(char c) {
+            switch (c) {
+                case '-':
+                    return TileType.Empty;
+                case '*':
+                    return TileType.Wall;
+                case ' ':
+                    return TileType.Floor;
+                case '+':
+                    return TileType.Box;
+                case 'v':
+                    return TileType.ArrowDown;
+                case '^':
+                    return TileType.ArrowUp;
+                case '<':
+                    return TileType.ArrowLeft;
+                case '>':
+                    return TileType.ArrowRight;
+                case 'o':
+                    return TileType.Hole;
+                case 'S':
+                    return TileType.Ice;
+                case 'R':
+                    return TileType.RandomBox;
+                default:
+                    if (Char.IsDigit(c)) {
+                        return TileType.Spawn;
+                    }
+                    return TileType.Empty;
+            }
+
         }
     }
 }

@@ -22,13 +22,14 @@ public class MapSelection : MonoBehaviour {
 
     void Start() {
         Instance = this;
-        AllMaps = new List<string>();
+        AllMaps = new List<string>(MapController.GetAllMapNames());
         SelectedMaps = new List<string>();
-        string path = Path.Combine(Application.streamingAssetsPath, "Maps");
-        string[] files = Directory.GetFiles(path,"*.map");
-        foreach(string file in files) {
-            AllMaps.Add(Path.GetFileNameWithoutExtension(file));
-        }
+        //string path = Path.Combine(Application.streamingAssetsPath, "Maps");
+        //string[] files = Directory.GetFiles(path,"*.map");
+        //foreach(string file in files) {
+        //    AllMaps.Add(Path.GetFileNameWithoutExtension(file));
+        //}
+
         CurrentlyInList = new List<string>(AllMaps);
         playerNumToMaps = new Dictionary<int, List<string>>();
         nameToMapSelect = new Dictionary<string, MapSelect>();
@@ -40,7 +41,7 @@ public class MapSelection : MonoBehaviour {
             go.GetComponentInChildren<Text>().text = map;
             go.Select(false);
             nameToMapSelect[map] = go;
-            int.TryParse(MapController.Instance.GetMapFile(map)[1], out int playerNum);
+            int.TryParse(MapController.GetMapFile(map)[1], out int playerNum);
             if (playerNumToMaps.ContainsKey(playerNum)) {
                 playerNumToMaps[playerNum].Add(map);
             } else {
@@ -51,7 +52,7 @@ public class MapSelection : MonoBehaviour {
     }
 
     internal void ShowMap(string name) {
-        MapController.Instance?.LoadMap(name);
+        MapController.Instance?.LoadMap(name,false);
     }
 
     void OnMapClick(string name, bool select) {
@@ -67,18 +68,18 @@ public class MapSelection : MonoBehaviour {
                 ShowMap(SelectedMaps[(index + 1) % SelectedMaps.Count]);
             }
         }
-        PlayerController.Instance.CheckStartButton();
+        PlayPanel.Instance.CheckStartButton();
     }
     void Update() {
         if (Input.GetKeyDown(KeyCode.S)) {
             SelectedMaps.Clear();
             SelectAll?.Invoke();
-            PlayerController.Instance.CheckStartButton();
+            PlayPanel.Instance.CheckStartButton();
         }
         if (Input.GetKeyDown(KeyCode.U)) {
             UnselectAll?.Invoke();
             SelectedMaps.Clear();
-            PlayerController.Instance.CheckStartButton();
+            PlayPanel.Instance.CheckStartButton();
         }
     }
 
@@ -99,8 +100,8 @@ public class MapSelection : MonoBehaviour {
             ms.gameObject.SetActive(false);
         foreach (string name in CurrentlyInList)
             nameToMapSelect[name].gameObject.SetActive(true);
-        PlayerController.Instance.CheckStartButton();
-        MapController.Instance?.LoadMap(SelectedMaps[0]);
+        PlayPanel.Instance.CheckStartButton();
+        MapController.Instance?.LoadMap(SelectedMaps[0],false);
 
     }
 }

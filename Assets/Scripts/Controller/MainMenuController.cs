@@ -7,6 +7,11 @@ public class MainMenuController : MonoBehaviour {
     public GameObject PlayPanel;
     public GameObject OptionPanel;
 
+    public void Update() {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            OpenMainPanel();
+    }
+
     public void OpenMainPanel() {
         PlayPanel.SetActive(false);
         OptionPanel.SetActive(false);
@@ -22,6 +27,10 @@ public class MainMenuController : MonoBehaviour {
         OptionPanel.SetActive(true);
         MainPanel.SetActive(false);
     }
+    public void SwitchToEditor() {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("EditorScene");
+    }
+
     public void CloseApplication() {
 #if UNITY_STANDALONE
         Application.Quit();

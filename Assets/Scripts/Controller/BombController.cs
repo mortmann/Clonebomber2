@@ -20,6 +20,7 @@ public class BombController : MonoBehaviour {
 
     public bool Shake { get; private set; }
     public bool ParableFlight = true;
+    internal static float ShakeAmount = 1.45f;
 
     void Start() {
         normalCameraPos = Camera.main.transform.position;
@@ -73,7 +74,7 @@ public class BombController : MonoBehaviour {
         source.PlayOneShot(explode);
         explodeSources.Add(source);
         go.transform.position = b.gameObject.transform.position;
-        currentMagnitude = 1.75f;
+        currentMagnitude = ShakeAmount;
         Shake = true;
     }
     

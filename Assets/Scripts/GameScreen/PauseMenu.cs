@@ -5,12 +5,12 @@ using UnityEngine.SceneManagement;
 public class PauseMenu : MonoBehaviour {
     public GameObject PauseMenuGO;
     // Start is called before the first frame update
-    void Start() {
+    protected virtual void Start() {
         PauseMenuGO.SetActive(false);
     }
 
     // Update is called once per frame
-    void Update() {
+    protected virtual void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
             if(PauseMenuGO.activeSelf) {
                 ClosePauseMenu();
@@ -20,13 +20,15 @@ public class PauseMenu : MonoBehaviour {
             }
         }
     }
+
     public void ClosePauseMenu() {
         PauseMenuGO.SetActive(false);
         Time.timeScale = 1;
     }
     public void QuitMenu() {
         ClosePauseMenu();
-        Destroy(PlayerController.Instance.gameObject);
+        if(PlayerController.Instance!=null)
+            Destroy(PlayerController.Instance.gameObject);
         SceneManager.LoadScene("MainMenu");
     }
     public void QuitDesktop() {

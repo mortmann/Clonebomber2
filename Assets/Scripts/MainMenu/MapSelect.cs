@@ -14,10 +14,10 @@ public class MapSelect : MonoBehaviour {
 
     void Start() {
         EventTrigger trigger = GetComponent<EventTrigger>();
-        EventTrigger.Entry enter = new EventTrigger.Entry {
+        EventTrigger.Entry click = new EventTrigger.Entry {
             eventID = EventTriggerType.PointerClick
         };
-        enter.callback.AddListener((data) => {
+        click.callback.AddListener((data) => {
 
         if (((PointerEventData)data).pointerId == -1) {
                 OnClick();
@@ -33,7 +33,7 @@ public class MapSelect : MonoBehaviour {
             sr.verticalScrollbar.value += sr.scrollSensitivity*Time.deltaTime*((PointerEventData)data).scrollDelta.y;
         });
         trigger.triggers.Add(scroll);
-        trigger.triggers.Add(enter);
+        trigger.triggers.Add(click);
         MapSelection.Instance.SelectAll += SelectAll;
         MapSelection.Instance.UnselectAll += UnselectAll;
         //Select(true);

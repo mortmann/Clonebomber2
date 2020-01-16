@@ -8,7 +8,7 @@ public class Flyable : MonoBehaviour {
     protected bool isBouncing, isRising;
     float x, flyHeight;
     protected float flySpeed;
-    protected readonly float maxFlySpeed = 19.81f;
+    protected readonly float maxFlySpeed = 13.81f;
     private float currDistance = 0;
     Vector3 heightParable;
     Vector3 flySpeedParable;
@@ -100,8 +100,13 @@ public class Flyable : MonoBehaviour {
         flyDistance = Mathf.Abs(Vector3.Distance(transform.position, flyTarget));
 
         x = Mathf.Abs(Vector3.Distance(startPosition, target));
-        heightParable = GetParabel(new Vector2(0, 1), new Vector2(x / 2, maxHeight), new Vector2(x, 1));
-        flySpeedParable = GetParabel(new Vector2(0, maxFlySpeed), new Vector2(x / 2, 9.81f), new Vector2(x, maxFlySpeed));
+        if(center == false) {
+            heightParable = GetParabel(new Vector2(0, 1), new Vector2(x / 2, maxHeight), new Vector2(x, 1));
+            flySpeedParable = GetParabel(new Vector2(0, maxFlySpeed), new Vector2(x / 2, 9.81f), new Vector2(x, maxFlySpeed));
+        } else {
+            heightParable = GetParabel(new Vector2(-x, 1), new Vector2(0, maxHeight), new Vector2(x, 1));
+            flySpeedParable = GetParabel(new Vector2(-x, maxFlySpeed), new Vector2(0, 9.81f), new Vector2(x, maxFlySpeed));
+        }
 
         flyMove.x = target.x - transform.position.x;
         flyMove.y = target.y - transform.position.y;
@@ -133,7 +138,10 @@ public class Flyable : MonoBehaviour {
         float y1 = v1.y;
         float y2 = v2.y;
         float y3 = v3.y;
-
+        if(x1==x2||x1==x3||x1==x2) {
+            Debug.LogError("SAME X VALUE DETECTED " + this.name);
+            return Vector3.zero;
+        }
         float a = (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / ((x1 - x2) * (x1 - x3) * (x3 - x2));
         float b = ((x1 * x1) * (y2 - y3) + (x2 * x2) * (y3 - y1) + (x3 * x3) * (y1 - y2)) / ((x1 - x2) * (x1 - x3) * (x2 - x3));
         float c = ((x1 * x1) * (x2 * y3 - x3 * y2) + x1 * ((x3 * x3) * y2 - (x2 * x2) * y3) + x2 * x3 * y1 * (x2 - x3)) / ((x1 - x2) * (x1 - x3) * (x2 - x3));

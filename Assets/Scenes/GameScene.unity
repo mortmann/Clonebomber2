@@ -549,7 +549,7 @@ MonoBehaviour:
     - {fileID: -6611490010577821925, guid: 322751b0b89082043823125526a97715, type: 3}
     MiddleSprites: []
   explode: {fileID: 8300000, guid: c4ca103b4589d7e48bfb86db1cdf8c29, type: 3}
-  ParableFlight: 0
+  ParableFlight: 1
 --- !u!1 &514665994
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,63 +14,40 @@ public class PlayerController : MonoBehaviour {
     public static PlayerController Instance;
     public CharacterSprites[] CharacterGraphics;
     public List<PlayerData> Players;
-    public Transform PlayerContent;
-    public PlayerSetter PlayerSetterPrefab;
-    public GameObject PlayerGamePrefab;
-    public List<PlayerSetter> PlayerSettings;
-    public List<PlayerSetter> AllPlayerSettings;
     float waitForGameOver = 0.5f;
-    public int NumberOfWins { get; private set; } = 3 ;
-    public int SuddenDeathTimerStart { get; private set; } = 30; //in seconds
-    public float SuddenDeathTimer { get; private set; } = 30; //in seconds
+    public int NumberOfWins { get; set; } = 3 ;
+    public int SuddenDeathTimerStart { get; set; } = 30; //in seconds
+    public float SuddenDeathTimer { get; set; } = 30; //in seconds
 
     public List<string> SelectedMaps { get; private set; }
-
-    public Slider WinSlider;
-    public Slider SuddenDeathSlider;
-    public Button StartGameButton;
-    private static string fileName = "game.ini";
-    PlayerSave PlayerSaveData;
 
     public AudioClip hurryUpSuddenDeathClip;
     public SuddenDeath suddenDeathPrefab;
     public CorpsePart corpsePartPrefab;
+    public GameObject PlayerGamePrefab;
+
     SuddenDeath suddenDeath;
     private bool playedHurryUpWarning;
     float time;
-    private MapController.MapTile[] spawnPoints;
+
+    public bool RandomSpawns;
+    public bool RandomMapOrder;
+    public int CurrentMap;
+    public bool ClampUpgrades;
+
+    public Dictionary<PowerUPType, int> clampedPowerUPTypeAmount = new Dictionary<PowerUPType, int> {
+        {PowerUPType.Speed, 5 },
+        {PowerUPType.Blastradius, 12 },
+        {PowerUPType.Bomb, 9 },
+    };
+
+    public string NextMapString { private set; get; }
+    public static readonly int MaxPlayer = 8;
 
     void Awake() {
         if (Instance != null)
             Destroy(this.gameObject);
         Instance = this;
-        Load();
-
-        if (PlayerContent!=null) {
-            foreach (Transform t in PlayerContent)
-                Destroy(t.gameObject);
-            int player = 0;
-            AllPlayerSettings = new List<PlayerSetter>();
-            foreach (Character c in Enum.GetValues(typeof(Character))) {
-                PlayerSetter playerSetter = Instantiate(PlayerSetterPrefab);
-                playerSetter.transform.SetParent(PlayerContent);
-                playerSetter.playerNumber = player;
-                if (PlayerSaveData!=null) {
-                    playerSetter.Set(PlayerSaveData.playerSettings.Find(x => x.playerNumber == player));
-                } else {
-                    playerSetter.character = c;
-                }
-                AllPlayerSettings.Add(playerSetter);
-                player++;
-            }
-            StartGameButton.onClick.AddListener(StartGame);
-            WinSlider.onValueChanged.AddListener(OnWinSliderChange);
-            SuddenDeathSlider.onValueChanged.AddListener(OnSuddenDeathSliderChange);
-            if(PlayerSaveData!=null) {
-                WinSlider.value = PlayerSaveData.numberOfWins;
-                SuddenDeathSlider.value = PlayerSaveData.timeToSuddenDeath;
-            }
-        }
         playerNumberToData = new Dictionary<int, PlayerData>();
         Players = new List<PlayerData>();
         foreach (PlayerData pd in FindObjectsOfType<PlayerData>()) {
@@ -78,7 +55,14 @@ public class PlayerController : MonoBehaviour {
             Players.Add(pd);
         }
         DontDestroyOnLoad(gameObject);
-        //SceneManager.activeSceneChanged += SceneChange;
+    }
+
+    private void OnRandomMapOrderToggle(bool order) {
+        RandomMapOrder = order;
+    }
+
+    private void OnRandomSpawnToggle(bool spawn) {
+        RandomSpawns = spawn;
     }
 
     internal void CreateCorpseParts(Vector3 position) {
@@ -97,55 +81,49 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void CreatePlayers() {
-        foreach (PlayerSetter ps in PlayerSettings) {
+        foreach (PlayerSetter ps in FindObjectsOfType<PlayerSetter>()) {
             if (ps.isDisabled)
                 continue;
             GameObject player = Instantiate(PlayerGamePrefab);
             playerNumberToData[ps.playerNumber] = player.GetComponent<PlayerData>();
             playerNumberToData[ps.playerNumber].Set(ps);
-            //Destroy(player.GetComponent<PlayerMove>());
-            //player.AddComponent<PlayerMove>();
             player.GetComponentInChildren<CustomAnimator>()
                 .SetSprites(Array.Find<CharacterSprites>(CharacterGraphics, x => x.Character == ps.character));
             Players.Add(playerNumberToData[ps.playerNumber]);
             DontDestroyOnLoad(player);
         }
     }
-    private void StartGame() {
-        Save();
+    public void StartGame() {
         MapSelection mp = FindObjectOfType<MapSelection>();
         SelectedMaps = mp.SelectedMaps;
+        NextMapString = GetNextMap();
         CreatePlayers();
-        MapController.SetMap(GetNextMap());
-        NextMap();
-        SceneManager.LoadScene("GameScene");
+        StartNextMap();
     }
 
-    private void OnWinSliderChange(float amount) {
-        NumberOfWins = Mathf.Clamp((int)amount,1,30);
-        WinSlider.GetComponentInChildren<Text>().text = "" + Mathf.Clamp((int)amount, 1, 30);
-    }
-
-    internal void NextMap() {
+    internal void StartNextMap() {
         for (int i = 0; i < Players.Count; i++) {
             PlayerData pd = Players[i]; 
             pd.Reset();
             pd.gameObject.SetActive(true);
             pd.transform.position = new Vector3(9.5f, 7.5f);
-            //pd.PlayerMove.FlyToTarget(spawnPoints[i].GetCenter(), false, true);
         }
         SuddenDeathTimer = SuddenDeathTimerStart;
+        SceneManager.LoadScene("GameScene");
     }
 
-    private void OnSuddenDeathSliderChange(float amount) {
-        SuddenDeathTimerStart = Mathf.Clamp((int)amount, 30, 300);
-        SuddenDeathSlider.GetComponentInChildren<Text>().text = "" + Mathf.Clamp((int)amount, 30, 300);
-    }
-    public void SetSpawnPosition(MapController.MapTile[] spawnPoints) {
-        this.spawnPoints = spawnPoints;
+    public void SetSpawnPosition(List<MapController.MapTile> spawnPoints) {
+        if (spawnPoints == null)
+            return;
+        List<MapController.MapTile> spawns = new List<MapController.MapTile>(spawnPoints);
         for (int i = 0; i < Players.Count; i++) {
             PlayerData pd = Players[i];
-            pd.PlayerMove.FlyToTarget(spawnPoints[i].GetCenter(), false, true);
+            int spawn = i;
+            if (RandomSpawns) {
+                spawn = UnityEngine.Random.Range(0, spawns.Count);
+                spawns.RemoveAt(spawn);
+            }
+            pd.PlayerMove.FlyToTarget(spawns[i].GetCenter(), false, true);
         }
     }
 
@@ -179,7 +157,6 @@ public class PlayerController : MonoBehaviour {
             foreach (PlayerData pd in Players) {
                 pd.gameObject.SetActive(false);
             }
-            MapController.SetMap(GetNextMap());
             SceneManager.LoadScene("ScoreScene");
         }
         if (SuddenDeathTimer > 0) {
@@ -199,7 +176,18 @@ public class PlayerController : MonoBehaviour {
     public CharacterSprites GetCharacterSprites(Character character) {
         return Array.Find<CharacterSprites>(CharacterGraphics, x => x.Character == character);
     }
+    public void AdvanceNextMap() {
+        NextMapString = GetNextMap();
+        MapController.Instance.LoadMap(NextMapString, false);
+    }
+    public int GetClampPowerUpValue(PowerUPType type, int value) {
+        if (ClampUpgrades == false || clampedPowerUPTypeAmount==null || clampedPowerUPTypeAmount.ContainsKey(type)==false)
+            return value;
+        return Mathf.Clamp(value, 0, clampedPowerUPTypeAmount[type]);
+    }
     public string GetNextMap() {
+        if(RandomMapOrder == false)
+            return SelectedMaps[CurrentMap++%SelectedMaps.Count];
         return SelectedMaps[UnityEngine.Random.Range(0, SelectedMaps.Count)];
     }
     [Serializable]
@@ -214,26 +202,6 @@ public class PlayerController : MonoBehaviour {
         public float Offset;
     }
 
-    public void CheckStartButton() {
-        if (PlayerSettings.Count > 1 && FindObjectOfType<MapSelection>().SelectedMaps.Count>0)
-            StartGameButton.interactable = true;
-        if (PlayerSettings.Count <= 1 || FindObjectOfType<MapSelection>().SelectedMaps.Count == 0)
-            StartGameButton.interactable = false;
-    }
-
-    internal void AddPlayerSetter(PlayerSetter playerSetter) {
-        if (PlayerSettings.Contains(playerSetter))
-            return;
-        CheckStartButton();
-        PlayerSettings.Add(playerSetter);
-        FindObjectOfType<MapSelection>().UpdateList(PlayerSettings.Count);
-    }
-    internal void RemovePlayerSettings(PlayerSetter playerSetter) {
-        PlayerSettings.Remove(playerSetter);
-        CheckStartButton();
-        FindObjectOfType<MapSelection>().UpdateList(PlayerSettings.Count);
-    }
-
     public static Sprite[] GetPartOfArray(Sprite[] all, int start, int end) {
         int amount = end - start;
         amount++;
@@ -242,39 +210,4 @@ public class PlayerController : MonoBehaviour {
         return select;
     }
 
-
-    private void Load() {
-        string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);
-        if (File.Exists(filePath) == false) {
-            return;
-        }
-        PlayerSaveData = JsonConvert.DeserializeObject<PlayerSave>(File.ReadAllText(filePath));
-    }
-
-    private void Save() {
-        string path = Application.dataPath.Replace("/Assets", "");
-        if (Directory.Exists(path) == false) {
-            // NOTE: This can throw an exception if we can't create the folder,
-            // but why would this ever happen? We should, by definition, have the ability
-            // to write to our persistent data folder unless something is REALLY broken
-            // with the computer/device we're running on.
-            Directory.CreateDirectory(path);
-        }
-        List<PlayerSetter.PlayerSettingSave> pss = new List<PlayerSetter.PlayerSettingSave>();
-        foreach(PlayerSetter ps in AllPlayerSettings) {
-            pss.Add(ps.GetSave());
-        }
-        PlayerSave save = new PlayerSave {
-            playerSettings = pss,
-            numberOfWins = NumberOfWins,
-            timeToSuddenDeath = SuddenDeathTimerStart
-        };
-        string filePath = System.IO.Path.Combine(path, fileName);
-        File.WriteAllText(filePath, JsonConvert.SerializeObject(save, new JsonSerializerSettings { }));
-    }
-    public class PlayerSave {
-        public int numberOfWins;
-        public int timeToSuddenDeath;
-        public List<PlayerSetter.PlayerSettingSave> playerSettings;
-    }
 }

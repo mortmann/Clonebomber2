@@ -24,11 +24,11 @@ public class PlayerMove : Flyable {
     PlayerData PlayerData;
 
     public Dictionary<PowerUPType, int> powerUPTypeToAmount { get; internal set; }
-    public int NumberBombs => powerUPTypeToAmount[PowerUPType.Bomb];
+    public int NumberBombs => PlayerController.Instance.GetClampPowerUpValue(PowerUPType.Bomb, powerUPTypeToAmount[PowerUPType.Bomb]);
+    public int NumberSpeeds => PlayerController.Instance.GetClampPowerUpValue(PowerUPType.Speed, powerUPTypeToAmount[PowerUPType.Speed]);
+    public int Blastradius => PlayerController.Instance.GetClampPowerUpValue(PowerUPType.Blastradius, powerUPTypeToAmount[PowerUPType.Blastradius]);
     public bool CanThrowBombs => powerUPTypeToAmount[PowerUPType.Throw] > 0;
     public bool CanPushBombs => powerUPTypeToAmount[PowerUPType.Push] > 0;
-    public int NumberSpeeds => powerUPTypeToAmount[PowerUPType.Speed];
-    public int Blastradius => powerUPTypeToAmount[PowerUPType.Blastradius];
     public bool HasDiarrhea => powerUPTypeToAmount[PowerUPType.Diarrhea] > 0;
     public bool HasInvertedControls => powerUPTypeToAmount[PowerUPType.Joint] > 0;
     public bool IsSuperFast => powerUPTypeToAmount[PowerUPType.Superspeed] > 0;
@@ -53,7 +53,6 @@ public class PlayerMove : Flyable {
     Dictionary<PowerUPType, int> startUpgrades = new Dictionary<PowerUPType, int> {
         {PowerUPType.Bomb, 1 },
         {PowerUPType.Blastradius,2 },
-        {PowerUPType.Throw, 1 },
     };
     void Start() {
         audioSource = GetComponent<AudioSource>();
@@ -102,19 +101,17 @@ public class PlayerMove : Flyable {
             moves.Remove(Vector3.left);
         }
         if (IsAction() || HasDiarrhea) {
-            if (CanThrowBombs&&lastPlacedBomb != null 
-                    && lastPlacedBomb == MapController.Instance.GetTile(transform.position).Bomb) {
-                lastPlacedBomb.ResetTile();
+            if (CanThrowBombs && MapController.Instance.GetTile(transform.position).Bomb != null) {
+                Bomb b = MapController.Instance.GetTile(transform.position).Bomb;
+                b.ResetTile();
                 gameObject.layer = LayerMask.NameToLayer("Player");
-                lastPlacedBomb.FlyToTarget(this.transform.position + LastMove * throwDistance, true);
+                b.FlyToTarget(this.transform.position + LastMove * throwDistance, true);
             } else
             if (PlacedBombs < NumberBombs) {
                 BombCooldown = BombCooldownTime;
                 lastPlacedBomb = BombController.Instance.PlaceBomb(PlayerData.Character, transform.position, this, true);
-                if (lastPlacedBomb != null) {
-                    lastPlacedBomb.OnDestroycb += OnBombExplode;
-                    PlacedBombs++;
-                }
+                lastPlacedBomb.OnDestroycb += OnBombExplode;
+                PlacedBombs++;
             }
         }
         if (BombCooldown > 0) {
@@ -235,8 +232,6 @@ public class PlayerMove : Flyable {
     //    yield return null;
     //}
     private void OnBombExplode(Bomb b) {
-        if (lastPlacedBomb == b)
-            lastPlacedBomb = null;
         PlacedBombs--;
     }
     internal void AddPowerUP(PowerUPType powerType) {

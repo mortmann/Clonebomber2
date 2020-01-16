@@ -52,7 +52,7 @@ public class PlayerSetter : MonoBehaviour {
         InputDevicesDropDown.onValueChanged.AddListener(OnValueChange);
         PlayerImage.sprite = PlayerController.Instance.GetCharacterSprites(character).SpritesDown[0];
         PlayerImage.preserveAspect = true;
-        PlayerController.Instance.AddPlayerSetter(this);
+        PlayPanel.Instance.AddPlayerSetter(this);
         foreach (KeyInputs ki in inputToCode.Keys) {
             switch (ki) {
                 case KeyInputs.Up:
@@ -160,7 +160,7 @@ public class PlayerSetter : MonoBehaviour {
             RightButton.interactable = false;
             ActionButton.interactable = false;
             isDisabled = true;
-            PlayerController.Instance.RemovePlayerSettings(this);
+            PlayPanel.Instance.RemovePlayerSettings(this);
             color.a = 0.5f;
             PlayerImage.color = color;
             return;
@@ -176,7 +176,7 @@ public class PlayerSetter : MonoBehaviour {
         if (controllers.Contains(inputs[select])) {
             controller = controllers.IndexOf(inputs[select]);
         }
-        PlayerController.Instance.AddPlayerSetter(this);
+        PlayPanel.Instance.AddPlayerSetter(this);
         isDisabled = false;
         color.a = 1f;
         PlayerImage.color = color;

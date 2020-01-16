@@ -81,12 +81,11 @@ public class ScoreScreenController : MonoBehaviour {
             PressSpaceContinue.onClick.AddListener(NextRound);
             PressESCtoQuit.onClick.AddListener(ReturnMenu);
         }
-        
+        PlayerController.Instance.AdvanceNextMap();
     }
 
     private void NextRound() {
-        PlayerController.Instance.NextMap();
-        SceneManager.LoadScene("GameScene");
+        PlayerController.Instance.StartNextMap();
     }
     private void ReturnMenu() {
         Destroy(PlayerController.Instance.gameObject);

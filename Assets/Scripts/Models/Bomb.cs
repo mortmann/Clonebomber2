@@ -20,8 +20,9 @@ public class Bomb : Flyable {
     public Action<Bomb> OnExplodecb { get; internal set; }
     public Action<Bomb> OnDestroycb;
     Vector3 pushMove;
-    private float Speed = 4f;
+    private readonly float Speed = 4f;
     MapController.MapTile tile;
+
     void Start() {
         Renderer = GetComponentInChildren<SpriteRenderer>();
         HitBox = GetComponent<CircleCollider2D>();
@@ -41,7 +42,7 @@ public class Bomb : Flyable {
         if (isFlying||isBouncing||isFalling)
             return;
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
-        if (Vector3.Distance(transform.position,tt.GetCenter()) < pushMove.magnitude * Time.fixedDeltaTime * Speed){
+        if (Vector3.Distance(transform.position,tt.GetCenter()) <= pushMove.magnitude * Time.fixedDeltaTime * Speed){
             CheckTile();
         }
         explosionTimer -= Time.fixedDeltaTime;
