@@ -61,12 +61,7 @@ public class MapController : MonoBehaviour {
     void Awake() {
         Instance = this;
         typeToTileBase = new Dictionary<TileType, Tile>();
-        Tiles = new MapTile[maxX+1, maxY+1];
-        for (int x = 0; x < Tiles.GetLength(0); x++) {
-            for (int y = 0; y < Tiles.GetLength(1); y++) {
-                Tiles[x, y] = new MapTile(TileType.Empty, x, y);
-            }
-        }
+        
         ListOfTiles = new List<MapTile>();
         LoadTileBases();
         if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name=="GameScene") {
@@ -89,6 +84,13 @@ public class MapController : MonoBehaviour {
             previewMap.ClearAllTiles();
         iceMap.ClearAllTiles();
 
+        Tiles = new MapTile[maxX + 1, maxY + 1];
+        for (int mx = 0; mx < Tiles.GetLength(0); mx++) {
+            for (int my = 0; my < Tiles.GetLength(1); my++) {
+                Tiles[mx, my] = new MapTile(TileType.Empty, mx, my);
+            }
+        }
+
         Dictionary<int, MapTile> dicSpawns = new Dictionary<int, MapTile>();
         string[] allLines = GetMapFile(name);
         int y = 1; //because outer layer be empty
@@ -97,46 +99,9 @@ public class MapController : MonoBehaviour {
             int x = 1; //because outer layer be empty
             foreach (char c in line) {
                 Tiles[x, y] = new MapTile(MapTile.ConvertChar(c), x, y);
-                if(Tiles[x, y].Type==TileType.Spawn) {
+                if (Tiles[x, y].Type == TileType.Spawn) {
                     dicSpawns[int.Parse("" + c)] = Tiles[x, y];
                 }
-                //if (c == '-') {
-                //    Tiles[x, y] = new MapTile(TileType.Empty,x,y);
-                //}
-                //else if (c == ' ') {
-                //    Tiles[x, y] = new MapTile(TileType.Floor, x, y);
-                //}
-                //else if (c == '*') {
-                //    Tiles[x, y] = new MapTile(TileType.Wall, x, y);
-                //}
-                //else if (c == '+') {
-                //    Tiles[x, y] = new MapTile(TileType.Box, x, y); 
-                //}
-                //else if (c == 'v') {
-                //    Tiles[x, y] = new MapTile(TileType.ArrowDown, x, y); 
-                //}
-                //else if (c == '^') {
-                //    Tiles[x, y] = new MapTile(TileType.ArrowUp, x, y); 
-                //}
-                //else if (c == '>') {
-                //    Tiles[x, y] = new MapTile(TileType.ArrowRight, x, y);
-                //}
-                //else if (c == '<') {
-                //    Tiles[x, y] = new MapTile(TileType.ArrowLeft, x, y);
-                //}
-                //else if (c == 'S') {
-                //    Tiles[x, y] = new MapTile(TileType.Ice, x, y); 
-                //}
-                //else if (c == 'o') {
-                //    Tiles[x, y] = new MapTile(TileType.Hole, x, y); 
-                //}
-                //else if (c == 'R') {
-                //    Tiles[x, y] = new MapTile(TileType.RandomBox, x, y); 
-                //}
-                //else if (Char.IsDigit(c)) {
-                //    Tiles[x, y] = new MapTile(TileType.Spawn, x, y); 
-                //    dicSpawns[int.Parse("" + c)] = Tiles[x, y];
-                //}
                 ListOfTiles.Add(Tiles[x, y]);
                 x++;
             }
@@ -165,8 +130,8 @@ public class MapController : MonoBehaviour {
     }
     
     private void SetTileMaps() {
-        for (int x = 0; x < Tiles.GetLength(0); x++) {
-            for (int y = 0; y < Tiles.GetLength(1); y++) {
+        for (int x = 1; x < Tiles.GetLength(0); x++) {
+            for (int y = 1; y < Tiles.GetLength(1); y++) {
                 if (Tiles[x, y].Type != TileType.Empty) {
                     floorMap.SetTile(new Vector3Int(x, y, 0), typeToTileBase[TileType.Floor]);
                 }
@@ -440,7 +405,7 @@ public class MapController : MonoBehaviour {
     public class MapTile {
         public readonly int x;
         public readonly int y;
-        public TileType Type;
+        public TileType Type = TileType.Empty;
         public Bomb Bomb;
         public bool HasBomb => Bomb != null;
         public MapTile(TileType type, int x, int y) {

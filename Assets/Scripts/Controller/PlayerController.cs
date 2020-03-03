@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour {
     public int NumberOfWins { get; set; } = 3 ;
     public int SuddenDeathTimerStart { get; set; } = 30; //in seconds
     public float SuddenDeathTimer { get; set; } = 30; //in seconds
+    public Color[] teamColors;
 
     public List<string> SelectedMaps { get; private set; }
 
@@ -55,6 +56,8 @@ public class PlayerController : MonoBehaviour {
             Players.Add(pd);
         }
         DontDestroyOnLoad(gameObject);
+        if (MapSelection.Instance != null)
+            MapSelection.Instance.UpdateList(0);
     }
 
     private void OnRandomMapOrderToggle(bool order) {
@@ -118,12 +121,12 @@ public class PlayerController : MonoBehaviour {
         List<MapController.MapTile> spawns = new List<MapController.MapTile>(spawnPoints);
         for (int i = 0; i < Players.Count; i++) {
             PlayerData pd = Players[i];
-            int spawn = i;
+            MapController.MapTile spawn = null;
             if (RandomSpawns) {
-                spawn = UnityEngine.Random.Range(0, spawns.Count);
-                spawns.RemoveAt(spawn);
+                spawn = spawns[UnityEngine.Random.Range(0, spawns.Count)];
+                spawns.Remove(spawn);
             }
-            pd.PlayerMove.FlyToTarget(spawns[i].GetCenter(), false, true);
+            pd.PlayerMove.FlyToTarget(spawn.GetCenter(), false, true);
         }
     }
 
@@ -134,17 +137,16 @@ public class PlayerController : MonoBehaviour {
         bool GameOver=false;
         HashSet<Teams> aliveTeams = new HashSet<Teams>();
         foreach(PlayerData p in Players) {
-            if (p.Team == Teams.NoTeam)
-                continue;
             if (p.IsDead == false) {
                 aliveTeams.Add(p.Team);
             }
         }
         if(aliveTeams.Count() == 1) {
-            GameOver = true;
-            Debug.Log("aliveTeams.Count()");
+            if(aliveTeams.First() == Teams.NoTeam && Players.FindAll(x => x.IsDead == false).Count <= 1)
+                GameOver = true;
+            else if(aliveTeams.First() != Teams.NoTeam)
+                GameOver = true;
         }
-
         if (Players.FindAll(x => x.IsDead == false).Count <= 1) {
             GameOver = true;
         }
@@ -153,7 +155,9 @@ public class PlayerController : MonoBehaviour {
             if (waitForGameOver > 0)
                 return;
             List<PlayerData> pds = Players.FindAll(x => x.IsDead == false);
-            pds.ForEach(x => x.numberOfWins++);
+            //pds.ForEach(x => x.numberOfWins++);
+            if (pds.Count > 0)
+                pds[0].numberOfWins++;
             foreach (PlayerData pd in Players) {
                 pd.gameObject.SetActive(false);
             }

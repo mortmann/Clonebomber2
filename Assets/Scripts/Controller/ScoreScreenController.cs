@@ -22,6 +22,8 @@ public class ScoreScreenController : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        foreach (Transform t in Scores)
+            Destroy(t.gameObject);
         winText.text = PlayerController.Instance.NumberOfWins + " required to win!";
         minuteSuddendeathText.text = PlayerController.Instance.SuddenDeathTimerStart+ "s to Suddendeath!";
         List<PlayerData> playerDatas = PlayerController.Instance.Players;
@@ -36,21 +38,18 @@ public class ScoreScreenController : MonoBehaviour {
             }
         }
         if(teamToScore.Count>0) {
-            //Scores.gameObject.SetActive(true);
-            //PlayerScores.gameObject.SetActive(false);
             foreach (Teams t in teamToScore.Keys) {
                 TeamScore TeamScore = Instantiate(TeamScorePrefab);
-                TeamScore.Show(playerDatas.FindAll(x => x.Team == t).ToArray());
+                TeamScore.Show(playerDatas.FindAll(x => x.Team == t).ToArray(), teamToScore[t]);
                 TeamScore.transform.SetParent(Scores);
             }
-        } else {
-            //TeamScores.gameObject.SetActive(false);
-            //PlayerScores.gameObject.SetActive(true);
-            foreach (PlayerData pd in playerDatas) {
-                PlayerScore PlayerScore = Instantiate(PlayerScorePrefab);
-                PlayerScore.Show(pd.Character,pd.numberOfWins);
-                PlayerScore.transform.SetParent(Scores);
-            }
+        }
+        foreach (PlayerData pd in playerDatas) {
+            if (pd.Team != Teams.NoTeam)
+                continue;
+            PlayerScore PlayerScore = Instantiate(PlayerScorePrefab);
+            PlayerScore.Show(pd.Character,pd.numberOfWins);
+            PlayerScore.transform.SetParent(Scores);
         }
         string WonText="";
         GameWon = false;

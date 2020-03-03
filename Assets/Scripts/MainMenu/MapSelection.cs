@@ -87,7 +87,7 @@ public class MapSelection : MonoBehaviour {
         foreach(int pn in playerNumToMaps.Keys) {
             if (pn >= count) {
                 foreach(string s in playerNumToMaps[pn]) {
-                    if (nameToMapSelect[s].selected)
+                    if (nameToMapSelect[s].selected && SelectedMaps.Contains(s)==false)
                         SelectedMaps.Add(s);
                 }
                 CurrentlyInList.AddRange(playerNumToMaps[pn]);

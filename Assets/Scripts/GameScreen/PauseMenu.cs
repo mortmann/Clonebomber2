@@ -32,6 +32,8 @@ public class PauseMenu : MonoBehaviour {
         SceneManager.LoadScene("MainMenu");
     }
     public void QuitDesktop() {
+        if(Application.isEditor)
+            UnityEditor.EditorApplication.isPlaying = false;
         Application.Quit();
     }
 }

@@ -18,7 +18,6 @@ public class PlayerSetter : MonoBehaviour {
     public Button CharacterButton;
     public Image PlayerImage;
     
-    public Color[] teamColors;
     private List<string> inputs;
     private List<string> controllers;
     bool setKey;
@@ -36,21 +35,10 @@ public class PlayerSetter : MonoBehaviour {
     internal int playerNumber;
 
     void Start() {
-        InputDevicesDropDown.ClearOptions();
-        inputs = new List<string> {
-            "Disabled",
-            "Keyboard"
-        };
-        string[] joysticks = new string[8];
-        Array.Copy(Input.GetJoystickNames(), joysticks,Mathf.Clamp(Input.GetJoystickNames().Length, 0,8));
-        inputs.AddRange(joysticks);
-        inputs.RemoveAll(x => x == null);
-        controllers = new List<string>(joysticks);
-        controllers.RemoveAll(x => x == null);
-        InputDevicesDropDown.AddOptions(inputs);
-        InputDevicesDropDown.value = 1;
-        InputDevicesDropDown.onValueChanged.AddListener(OnValueChange);
+        SetUpInputDropDown();
+        
         PlayerImage.sprite = PlayerController.Instance.GetCharacterSprites(character).SpritesDown[0];
+        TeamButton.GetComponent<Image>().color = PlayerController.Instance.teamColors[(int)team];
         PlayerImage.preserveAspect = true;
         PlayPanel.Instance.AddPlayerSetter(this);
         foreach (KeyInputs ki in inputToCode.Keys) {
@@ -91,6 +79,24 @@ public class PlayerSetter : MonoBehaviour {
         InputDevicesDropDown.RefreshShownValue();
     }
 
+    private void SetUpInputDropDown() {
+        InputDevicesDropDown.ClearOptions();
+        inputs = new List<string> {
+            "Disabled",
+            "Keyboard"
+        };
+        string[] joysticks = new string[8];
+        Array.Copy(Input.GetJoystickNames(), joysticks, Mathf.Clamp(Input.GetJoystickNames().Length, 0, 8));
+        inputs.AddRange(joysticks);
+        inputs.RemoveAll(x => string.IsNullOrEmpty(x));
+        controllers = new List<string>(joysticks);
+        controllers.RemoveAll(x => x == null);
+        InputDevicesDropDown.AddOptions(inputs);
+        InputDevicesDropDown.value = 1;
+        InputDevicesDropDown.onValueChanged.AddListener(OnValueChange);
+        InputDevicesDropDown.RefreshShownValue();
+    }
+
     private void ChangeCharcter() {
         character = (Character)((((int)character) + 1) % Enum.GetValues(typeof(Character)).Length);
         PlayerImage.sprite = PlayerController.Instance.GetCharacterSprites(character).SpritesDown[0];
@@ -107,7 +113,7 @@ public class PlayerSetter : MonoBehaviour {
 
     private void ChangeTeam() {
         team = (Teams)((((int)team)+1) % Enum.GetValues(typeof(Teams)).Length);
-        TeamButton.GetComponent<Image>().color = teamColors[(int)team];
+        TeamButton.GetComponent<Image>().color = PlayerController.Instance.teamColors[(int)team];
     }
 
     private void WaitForKeyDown(KeyInputs key,Button button) {
@@ -172,6 +178,12 @@ public class PlayerSetter : MonoBehaviour {
             LeftButton.interactable = true;
             RightButton.interactable = true;
             ActionButton.interactable = true;
+        } else {
+            UpButton.interactable = false;
+            DownButton.interactable = false;
+            LeftButton.interactable = false;
+            RightButton.interactable = false;
+            ActionButton.interactable = false;
         }
         if (controllers.Contains(inputs[select])) {
             controller = controllers.IndexOf(inputs[select]);
@@ -183,7 +195,11 @@ public class PlayerSetter : MonoBehaviour {
     }
 
     void Update() {
-        
+        if(Input.GetJoystickNames().Length != InputDevicesDropDown.options.Count - 2) { //-2 for keyboard and disabled
+            string option = InputDevicesDropDown.options[InputDevicesDropDown.value].text;
+            SetUpInputDropDown();
+            InputDevicesDropDown.value = Mathf.Clamp(InputDevicesDropDown.options.FindIndex(x => x.text == option),0,int.MaxValue);
+        }
     }
     public PlayerSettingSave GetSave() {
         return new PlayerSettingSave {
@@ -194,6 +210,9 @@ public class PlayerSetter : MonoBehaviour {
             playerNumber = playerNumber,
             IsDisabled = isDisabled
         };
+    }
+    private void OnDisable() {
+        Cursor.visible = true;
     }
     [JsonObject]
     public class PlayerSettingSave {
