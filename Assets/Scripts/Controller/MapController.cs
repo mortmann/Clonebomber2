@@ -371,14 +371,20 @@ public class MapController : MonoBehaviour {
     internal void CreateAndFlyPowerUPs(Dictionary<PowerUPType, int> powerUPTypeToAmount, PlayerData pm) {
         foreach(PowerUPType up in powerUPTypeToAmount.Keys) {
             for (int i = 0; i < powerUPTypeToAmount[up]; i++) {
-                PowerUP powerUP = Instantiate(PowerUPPrefab);
-                powerUP.SetPowerType(up, powerUPtypeSprites.Find(x => x.type == up).Sprite);
-                powerUP.transform.position = pm.gameObject.transform.position;
-                powerUP.FlyToTarget(GetRandomTargetTile(true, true));
+                CreateAndFlyPowerUP(up, pm);
+                //PowerUP powerUP = Instantiate(PowerUPPrefab);
+                //powerUP.SetPowerType(up, powerUPtypeSprites.Find(x => x.type == up).Sprite);
+                //powerUP.transform.position = pm.gameObject.transform.position;
+                //powerUP.FlyToTarget(GetRandomTargetTile(true, true));
             }
         }
     }
-
+    public void CreateAndFlyPowerUP(PowerUPType type, PlayerData pm) {
+        PowerUP powerUP = Instantiate(PowerUPPrefab);
+        powerUP.SetPowerType(type, powerUPtypeSprites.Find(x => x.type == type).Sprite);
+        powerUP.transform.position = pm.gameObject.transform.position;
+        powerUP.FlyToTarget(GetRandomTargetTile(true, true));
+    }
     public static List<string> GetAllMapNames() {
         List<string> AllMaps = new List<string> ();
         string path = Path.Combine(Application.streamingAssetsPath, "Maps");

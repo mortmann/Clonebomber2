@@ -65,6 +65,7 @@ public class PlayerMove : Flyable {
         foreach(PowerUPType put in startUpgrades.Keys) {
             powerUPTypeToAmount[put] = startUpgrades[put];
         }
+        AddPowerUP(PowerUPType.Joint);
     }
     
     void Update() {
@@ -198,6 +199,7 @@ public class PlayerMove : Flyable {
     private void RemoveNegativeEffect() {
         if (HasNegativEffect == false)
             return;
+        lastEffect = PowerUPType.Bomb;
         powerUPTypeToAmount[lastEffect] = 0;
     }
 
@@ -236,6 +238,7 @@ public class PlayerMove : Flyable {
     }
     internal void AddPowerUP(PowerUPType powerType) {
         if (HasNegativEffect) {
+            MapController.Instance.CreateAndFlyPowerUP(lastEffect, PlayerData);
             RemoveNegativeEffect();
         }
         switch (powerType) {
