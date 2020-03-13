@@ -30,3 +30,8 @@ sysinfo.txt
 .vs/Clonebomber2/v15/Server/sqlite3/storage.ide-wal
 .vs/Clonebomber2/v15/Server/sqlite3/storage.ide
 .vs/Clonebomber2/v15/Server/sqlite3/storage.ide-shm
+.vs/Clonebomber2/v16/Server/sqlite3/db.lock
+.vs/Clonebomber2/v16/Server/sqlite3/storage.ide
+.vs/Clonebomber2/v16/Server/sqlite3/storage.ide-wal
+.vs/Clonebomber2/v16/Server/sqlite3/storage.ide-shm
+Assembly-CSharp.csproj

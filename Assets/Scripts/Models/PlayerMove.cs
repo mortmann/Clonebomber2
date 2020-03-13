@@ -65,7 +65,6 @@ public class PlayerMove : Flyable {
         foreach(PowerUPType put in startUpgrades.Keys) {
             powerUPTypeToAmount[put] = startUpgrades[put];
         }
-        AddPowerUP(PowerUPType.Joint);
     }
     
     void Update() {
