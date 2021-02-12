@@ -1681,6 +1681,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6275696152172831584, guid: 488d154b1ccc3a14586ca4a4b9721c32,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 983064125}
     - target: {fileID: 6275696152172831585, guid: 488d154b1ccc3a14586ca4a4b9721c32,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3352,7 +3357,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2015681125}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.5786771
+  m_Size: 0.70582384
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6962,7 +6967,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.066399604}
+  m_AnchoredPosition: {x: 0, y: 0.012535159}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1908116283
