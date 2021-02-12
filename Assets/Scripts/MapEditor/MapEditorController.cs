@@ -11,6 +11,7 @@ public class MapEditorController : MonoBehaviour {
     public Sprite EmptyTileSprite;
     public Tilemap FloorMap;
     public Tilemap OtherMap;
+
     public Tilemap GridMap;
     public TileTypeSprite[] sprites;
     Dictionary<TileType, Sprite> tileTypeToSprite;
@@ -32,14 +33,16 @@ public class MapEditorController : MonoBehaviour {
         tileTypeToSprite = new Dictionary<TileType, Sprite>();
         Tile tile = ScriptableObject.CreateInstance<Tile>();
         tile.sprite = EmptyTileSprite;
-        for (int y = 0; y < MapController.maxY; y++) {
-            for (int x = 0; x < MapController.maxX; x++) {
-                GridMap.SetTile(new Vector3Int(x, y, 0), tile);
-            }
-        }
         foreach(TileTypeSprite tts in sprites) {
             tileTypeToSprite[tts.type] = tts.sprite;
         }
+        for (int y = 0; y < MapController.maxY; y++) {
+            for (int x = 0; x < MapController.maxX; x++) {
+                GridMap.SetTile(new Vector3Int(x, y, 0), tile);
+                FloorMap.SetTile(new Vector3Int(x, y, 0), GetTile(TileType.Floor));
+            }
+        }
+        
     }
 
     void Update() {

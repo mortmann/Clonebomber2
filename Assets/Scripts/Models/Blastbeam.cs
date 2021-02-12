@@ -34,14 +34,12 @@ public class Blastbeam : MonoBehaviour {
         }
         if (Timer <= 0) {
             Destroy(this.gameObject);
+            MapController.Instance.RemoveExplodeBox(this.transform.position);
             return;
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
         
-    }
-    private void OnDestroy() {
-        MapController.Instance.RemoveExplodeBox(this.transform.position);
     }
 }

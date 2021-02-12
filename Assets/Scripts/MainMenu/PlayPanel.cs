@@ -37,7 +37,7 @@ public class PlayPanel : MonoBehaviour {
         AllPlayerSettings = new List<PlayerSetter>();
         foreach (Character c in Enum.GetValues(typeof(Character))) {
             PlayerSetter playerSetter = Instantiate(PlayerSetterPrefab);
-            playerSetter.transform.SetParent(PlayerContent);
+            playerSetter.transform.SetParent(PlayerContent, false);
             playerSetter.playerNumber = player;
             if (GameDataSave != null) {
                 playerSetter.Set(GameDataSave.playerSettings.Find(x => x.playerNumber == player));

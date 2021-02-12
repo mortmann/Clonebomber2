@@ -53,6 +53,9 @@ public class PlayerMove : Flyable {
     Dictionary<PowerUPType, int> startUpgrades = new Dictionary<PowerUPType, int> {
         {PowerUPType.Bomb, 1 },
         {PowerUPType.Blastradius,2 },
+                {PowerUPType.Throw,2 },
+                        {PowerUPType.Push,2 },
+
     };
     void Start() {
         audioSource = GetComponent<AudioSource>();
@@ -65,11 +68,13 @@ public class PlayerMove : Flyable {
         foreach(PowerUPType put in startUpgrades.Keys) {
             powerUPTypeToAmount[put] = startUpgrades[put];
         }
+        gameObject.layer = LayerMask.NameToLayer("Player");
     }
-    
+
     void Update() {
         if (isFalling || isFlying)
             return;
+        CheckTile();
         if (PlayerData.IsDead)
             return;
         if (IsUPDown()) {
@@ -104,71 +109,74 @@ public class PlayerMove : Flyable {
             if (CanThrowBombs && MapController.Instance.GetTile(transform.position).Bomb != null) {
                 Bomb b = MapController.Instance.GetTile(transform.position).Bomb;
                 b.ResetTile();
-                gameObject.layer = LayerMask.NameToLayer("Player");
+                //gameObject.layer = LayerMask.NameToLayer("Player");
                 b.FlyToTarget(this.transform.position + LastMove * throwDistance, true);
-            } else
+            }
+            else
             if (PlacedBombs < NumberBombs) {
-                BombCooldown = BombCooldownTime;
-                lastPlacedBomb = BombController.Instance.PlaceBomb(PlayerData.Character, transform.position, this, true);
-                lastPlacedBomb.OnDestroycb += OnBombExplode;
-                PlacedBombs++;
+                MapController.MapTile mt = MapController.Instance.GetTile(transform.position);
+                if(HasDiarrhea || mt.HasBomb == false) {
+                    BombCooldown = BombCooldownTime;
+                    lastPlacedBomb = BombController.Instance.PlaceBomb(PlayerData.Character, transform.position, this, HasDiarrhea);
+                    lastPlacedBomb.OnDestroycb += OnBombExplode;
+                    PlacedBombs++;
+                }
             }
         }
         if (BombCooldown > 0) {
             BombCooldown -= Time.deltaTime;
         }
-        CheckTile();
     }
 
-    private bool IsUPDown() {
+    protected virtual bool IsUPDown() {
         if(controller != -1) {
             return Input.GetAxis("joystick " + controller + " vorizontal") < 0;
         }
         return Input.GetKeyDown(InputToCode[KeyInputs.Up]);
     }
-    private bool IsDownDown() {
+    protected virtual bool IsDownDown() {
         if (controller != -1) {
             return Input.GetAxis("joystick " + controller + " vorizontal") > 0;
         }
         return Input.GetKeyDown(InputToCode[KeyInputs.Down]);
     }
-    private bool IsLeftDown() {
+    protected virtual bool IsLeftDown() {
         if (controller != -1) {
             return Input.GetAxis("joystick " + controller + " horizontal") < 0;
         }
         return Input.GetKeyDown(InputToCode[KeyInputs.Left]);
     }
-    private bool IsRightDown() {
+    protected virtual bool IsRightDown() {
         if (controller != -1) {
             return Input.GetAxis("joystick " + controller + " horizontal") > 0;
         }
         return Input.GetKeyDown(InputToCode[KeyInputs.Right]);
     }
-    private bool IsUPUp() {
+    protected virtual bool IsUPUp() {
         if (controller != -1) {
             return Input.GetAxis("joystick " + controller + " vorizontal") >= 0;
         }
         return Input.GetKeyUp(InputToCode[KeyInputs.Up]);
     }
-    private bool IsDownUp() {
+    protected virtual bool IsDownUp() {
         if (controller != -1) {
             return Input.GetAxis("joystick " + controller + " vorizontal") <= 0;
         }
         return Input.GetKeyUp(InputToCode[KeyInputs.Down]);
     }
-    private bool IsLeftUp() {
+    protected virtual bool IsLeftUp() {
         if (controller != -1) {
             return Input.GetAxis("joystick " + controller + " horizontal") >= 0;
         }
         return Input.GetKeyUp(InputToCode[KeyInputs.Left]);
     }
-    private bool IsRightUp() {
+    protected virtual bool IsRightUp() {
         if (controller != -1) {
             return Input.GetAxis("joystick " + controller + " horizontal") <= 0;
         }
         return Input.GetKeyUp(InputToCode[KeyInputs.Right]);
     }
-    private bool IsAction() {
+    protected virtual bool IsAction() {
         if (controller != -1) {
             return Input.GetKeyDown("joystick " + controller + " button 0");
         }
@@ -244,7 +252,7 @@ public class PlayerMove : Flyable {
             case PowerUPType.Diarrhea:
             case PowerUPType.Joint:
             case PowerUPType.Superspeed:
-                audioSource.PlayOneShot(Array.Find<PlayerData.PowerUPSound>(PlayerData.powerUPsounds, x => x.type == powerType).clip);
+                audioSource.PlayOneShot(Array.Find(PlayerData.powerUPsounds, x => x.type == powerType).clip);
                 NegativeEffectTimer = NegativeEffectTime;
                 break;
             default:

@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Basic Ground
   layers:
   - Default
   - TransparentFX
@@ -13,29 +14,29 @@ TagManager:
   - UI
   - 
   - 
-  - RED
-  - BLUE
-  - GREEN
-  - YELLOW
-  - SPIDER
-  - BSD
-  - TUX
-  - SNAKE
+  - B1
+  - B2
+  - B3
+  - B4
+  - B5
+  - B6
+  - B7
+  - B8
   - FLYING
   - WALL
   - THROWN
   - Player
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - BOMB
+  - Inside
+  - I1
+  - I2
+  - I3
+  - I4
+  - I5
+  - I6
+  - I7
+  - I8
+  - Box
   - 
   m_SortingLayers:
   - name: Default

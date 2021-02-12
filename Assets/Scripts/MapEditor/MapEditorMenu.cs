@@ -47,7 +47,7 @@ public class MapEditorMenu : PauseMenu {
         saveNameToGO.Clear();
         foreach (string file in MapController.GetAllMapNames()) {
             GameObject go = Instantiate(SaveGamePrefab);
-            go.transform.SetParent(SaveSaveGameParent);
+            go.transform.SetParent(SaveSaveGameParent, false);
             go.GetComponentInChildren<Text>().text = file;
             EventTrigger trigger = go.GetComponent<EventTrigger>();
             EventTrigger.Entry click = new EventTrigger.Entry {
@@ -80,7 +80,7 @@ public class MapEditorMenu : PauseMenu {
         saveNameToGO.Clear();
         foreach (string file in MapController.GetAllMapNames()) {
             GameObject go = Instantiate(SaveGamePrefab);
-            go.transform.SetParent(LoadSaveGameParent);
+            go.transform.SetParent(LoadSaveGameParent, false);
             go.GetComponentInChildren<Text>().text = file;
             EventTrigger trigger = go.GetComponent<EventTrigger>();
             EventTrigger.Entry click = new EventTrigger.Entry {

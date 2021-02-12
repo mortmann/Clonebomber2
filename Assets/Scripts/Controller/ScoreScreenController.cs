@@ -41,7 +41,7 @@ public class ScoreScreenController : MonoBehaviour {
             foreach (Teams t in teamToScore.Keys) {
                 TeamScore TeamScore = Instantiate(TeamScorePrefab);
                 TeamScore.Show(playerDatas.FindAll(x => x.Team == t).ToArray(), teamToScore[t]);
-                TeamScore.transform.SetParent(Scores);
+                TeamScore.transform.SetParent(Scores, false);
             }
         }
         foreach (PlayerData pd in playerDatas) {
@@ -49,7 +49,7 @@ public class ScoreScreenController : MonoBehaviour {
                 continue;
             PlayerScore PlayerScore = Instantiate(PlayerScorePrefab);
             PlayerScore.Show(pd.Character,pd.numberOfWins);
-            PlayerScore.transform.SetParent(Scores);
+            PlayerScore.transform.SetParent(Scores, false);
         }
         string WonText="";
         GameWon = false;

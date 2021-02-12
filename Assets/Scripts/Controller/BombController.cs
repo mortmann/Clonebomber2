@@ -54,13 +54,16 @@ public class BombController : MonoBehaviour {
 
     public Bomb PlaceBomb(Character type, Vector3 Position, PlayerMove PlayerMove, bool overrideBombRestriktion) {
         MapTile mt = MapController.Instance.GetTile(Position);
-        if (mt.HasBomb&& overrideBombRestriktion==false)
+        if (mt.HasBomb && overrideBombRestriktion==false)
             return null;
         Bomb bomb = Instantiate(BombPrefab);
-        bomb.gameObject.layer = 8 + (int)type;
-        bomb.transform.position = mt.GetCenter();// new Vector3(mt.x+0.5f,mt.y + 0.5f);
+        bomb.finalLayer = LayerMask.NameToLayer("BOMB");
+        bomb.insideLayer = LayerMask.NameToLayer("I" + ((int)(type)+1));
+        bomb.gameObject.layer = LayerMask.NameToLayer("B" + ((int)(type)+1));
+        bomb.startLayer = LayerMask.NameToLayer("B" + ((int)(type) + 1));
+        bomb.transform.position = mt.GetCenter();
         bomb.Set(BombSpritesList.Find(x => x.type == type).Sprites, PlayerMove.Blastradius, type);
-        if(mt.HasBomb==false)
+        if (mt.HasBomb == false)
             mt.Bomb = bomb;
         bomb.OnExplodecb += (b) => { PlayExplodeSound(bomb); };
         return bomb;

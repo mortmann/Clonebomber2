@@ -41,11 +41,11 @@ public class MapController : MonoBehaviour {
     
     Dictionary<TileType, Tile> typeToTileBase;
 
-    MapTile[,] Tiles;
+    public MapTile[,] Tiles { get; private set; }
     List<MapTile> ListOfTiles;
     MapTile[] Spawns;
-    public static readonly int maxX = 18;
-    public static readonly int maxY = 14;
+    public static readonly int maxX = 17;
+    public static readonly int maxY = 13;
 
     internal Vector2 ClampVector(Vector2 target) {
         return new Vector2(Mathf.Clamp(target.x, 0, maxX), Mathf.Clamp(target.y, 0, maxY));
@@ -84,7 +84,7 @@ public class MapController : MonoBehaviour {
             previewMap.ClearAllTiles();
         iceMap.ClearAllTiles();
 
-        Tiles = new MapTile[maxX + 1, maxY + 1];
+        Tiles = new MapTile[maxX + 2, maxY + 2];
         for (int mx = 0; mx < Tiles.GetLength(0); mx++) {
             for (int my = 0; my < Tiles.GetLength(1); my++) {
                 Tiles[mx, my] = new MapTile(TileType.Empty, mx, my);
@@ -117,21 +117,21 @@ public class MapController : MonoBehaviour {
     }
 
     internal TileType GetTileTypeAt(Vector3 pos) {
-        if (pos.x < 0 || pos.y < 0 || pos.x > Tiles.GetLength(0) - 1 || pos.y > Tiles.GetLength(1) - 1) {
+        if (pos.x < 0 || pos.y < 0 || pos.x >= Tiles.GetLength(0) || pos.y >= Tiles.GetLength(1)) {
             return TileType.Empty;
         }
         return Tiles[Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y)].Type;
     }
     internal MapTile GetTile(Vector3 pos) {
-        if (pos.x < 0 || pos.y < 0 || pos.x > Tiles.GetLength(0) - 1 || pos.y > Tiles.GetLength(1) - 1) {
+        if (pos.x < 0 || pos.y < 0 || pos.x >= Tiles.GetLength(0)  || pos.y >= Tiles.GetLength(1) ) {
             return null;
         }
         return Tiles[Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y)];
     }
     
     private void SetTileMaps() {
-        for (int x = 1; x < Tiles.GetLength(0); x++) {
-            for (int y = 1; y < Tiles.GetLength(1); y++) {
+        for (int x = 0; x < Tiles.GetLength(0); x++) {
+            for (int y = 0; y < Tiles.GetLength(1); y++) {
                 if (Tiles[x, y].Type != TileType.Empty) {
                     floorMap.SetTile(new Vector3Int(x, y, 0), typeToTileBase[TileType.Floor]);
                 }
@@ -248,7 +248,7 @@ public class MapController : MonoBehaviour {
     }
 
     internal void ExplodeBox(Vector3 position) {
-        TileType tt = Tiles[Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y)].Type;
+        TileType tt = GetTileTypeAt(position);
         if (tt != TileType.Box)
             return;
         Vector3Int vector3Int = new Vector3Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), 0);
@@ -256,7 +256,7 @@ public class MapController : MonoBehaviour {
     }
 
     internal void RemoveExplodeBox(Vector3 position) {
-        TileType tt = Tiles[Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y)].Type;
+        TileType tt = GetTileTypeAt(position);
         if (tt != TileType.Box)
             return;
         DestroyTile(position);
@@ -394,7 +394,6 @@ public class MapController : MonoBehaviour {
         }
         return AllMaps;
     }
-
     [Serializable]
     public struct TypeSprites {
         public MapType type;

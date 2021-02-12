@@ -28,7 +28,7 @@ public class MainMenuController : MonoBehaviour {
         MainPanel.SetActive(false);
     }
     public void SwitchToEditor() {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("EditorScene");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Editor");
     }
 
     public void CloseApplication() {

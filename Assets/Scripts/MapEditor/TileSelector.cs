@@ -17,7 +17,7 @@ public class TileSelector : MonoBehaviour {
             if (tt == TileType.ExplodedBox)
                 continue;
             GameObject go = Instantiate(TilePrefab);
-            go.transform.SetParent(Parent);
+            go.transform.SetParent(Parent, false);
             tileTypeToGO[tt] = go;
             go.GetComponentInChildren<Text>().text = tt+"";
             EventTrigger triggers = go.GetComponent<EventTrigger>();

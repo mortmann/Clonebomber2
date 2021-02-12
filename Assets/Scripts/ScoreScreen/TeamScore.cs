@@ -25,11 +25,11 @@ public class TeamScore : MonoBehaviour {
         foreach (PlayerData pd in playerDatas) {
             PlayerScore ps = Instantiate(PlayerScorePrefab);
             ps.Show(pd.Character, 0);
-            ps.transform.SetParent(PlayerParent);
+            ps.transform.SetParent(PlayerParent, false);
         }
         for (int i = 0; i < score; i++) {
             GameObject Trophy = Instantiate(TrophyPrefab);
-            Trophy.transform.SetParent(TrophyScores);
+            Trophy.transform.SetParent(TrophyScores, false);
         }
 
         Vector2 sizeDelta = TrophyScores.GetComponent<RectTransform>().sizeDelta;

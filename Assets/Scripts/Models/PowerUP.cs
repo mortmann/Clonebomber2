@@ -39,7 +39,7 @@ public class PowerUP : Flyable {
                 FlyToTarget(MapController.Instance.GetRandomTargetTile(true,true));
             }
             else {
-                DestroyDelayed();
+                StartCoroutine(DestroyDelayed());
                 //Destroy(this.gameObject);
             }
         }

@@ -22,18 +22,22 @@ public class Bomb : Flyable {
     Vector3 pushMove;
     private readonly float Speed = 4f;
     MapController.MapTile tile;
+    internal int finalLayer;
+    internal int insideLayer;
+    internal int startLayer;
 
     void Start() {
         Renderer = GetComponentInChildren<SpriteRenderer>();
         HitBox = GetComponent<CircleCollider2D>();
         Rigidbody = GetComponent<Rigidbody2D>();
-        Collider2D[] c2ds = Physics2D.OverlapCircleAll(transform.position, HitBox.radius);
+        Collider2D[] c2ds = Physics2D.OverlapCircleAll(transform.position, HitBox.radius-0.1f);
         foreach (Collider2D c2d in c2ds) {
             if (c2d.GetComponent<PlayerMove>() == null) {
                 continue;
             }
-            c2d.gameObject.layer = gameObject.layer;
+            c2d.gameObject.layer = insideLayer;
         }
+        Renderer.sprite = BombSprites[0];
         CheckTile();
     }
 
@@ -112,6 +116,11 @@ public class Bomb : Flyable {
     }
 
     protected override void CheckTile() {
+        Collider2D[] c2ds = Physics2D.OverlapCircleAll(transform.position, HitBox.radius - 0.1f);
+        if (Array.Exists(c2ds, x => x.GetComponent<PlayerMove>() != null) == false) {
+            //noo player so change layer
+            gameObject.layer = finalLayer;
+        }
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
         if (tt.HasBomb && tt.Bomb != this) {
             if(isThrown) {

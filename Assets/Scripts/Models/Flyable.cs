@@ -22,7 +22,7 @@ public class Flyable : MonoBehaviour {
     float flyDistance;
     private float maxHeight = 3;
     public bool isFalling;
-    private int oldGameObjectLayer;
+    protected int oldGameObjectLayer;
 
     private void Awake() {
         Renderer = GetComponentInChildren<SpriteRenderer>();
@@ -123,7 +123,7 @@ public class Flyable : MonoBehaviour {
         while (Renderer.transform.localScale.x > 0.01f) {
             float modifier = 0.01f * overtime;
             Renderer.transform.localScale = new Vector3(Renderer.transform.localScale.x - modifier * 9.81f * Time.fixedDeltaTime,
-                                                 Renderer.transform.localScale.y - modifier * 9.81f * Time.fixedDeltaTime);
+                                                        Renderer.transform.localScale.y - modifier * 9.81f * Time.fixedDeltaTime);
             overtime += Time.fixedDeltaTime;
             yield return new WaitForEndOfFrame();
         }

@@ -20,7 +20,7 @@ public class PlayerScore : MonoBehaviour {
         Image.sprite = PlayerController.Instance.GetCharacterSprites(character).SpritesDown[0];
         for (int i = 0; i < scores; i++) {
             GameObject Trophy = Instantiate(TrophyPrefab);
-            Trophy.transform.SetParent(Scores);
+            Trophy.transform.SetParent(Scores, false);
         }
 
         Vector2 sizeDelta = Scores.GetComponent<RectTransform>().sizeDelta;

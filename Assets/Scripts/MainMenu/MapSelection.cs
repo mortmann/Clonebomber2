@@ -37,7 +37,7 @@ public class MapSelection : MonoBehaviour {
             MapSelect go = Instantiate(MapPrefab);
             go.mapName = map;
             go.OnSelect += OnMapClick;
-            go.transform.SetParent(MapContent.transform);
+            go.transform.SetParent(MapContent.transform, false);
             go.GetComponentInChildren<Text>().text = map;
             go.Select(false);
             nameToMapSelect[map] = go;
