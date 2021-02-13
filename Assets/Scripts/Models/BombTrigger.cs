@@ -9,7 +9,7 @@ public class BombTrigger : MonoBehaviour {
         }
         if (b.isFlying || b.isThrown)
             return;
-        Collider2D[] c2ds = Physics2D.OverlapCircleAll(transform.position, b.HitBox.radius - 0.1f);
+        Collider2D[] c2ds = Physics2D.OverlapCircleAll(transform.position, b.HitBox.radius);
         if(Array.Exists(c2ds,x=>x.GetComponent<PlayerMove>()!=null) == false) {
             //noo player so change layer
             b.gameObject.layer = b.finalLayer;

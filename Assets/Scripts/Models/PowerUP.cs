@@ -7,9 +7,11 @@ public class PowerUP : Flyable {
 
     public PowerUPType PowerType;
     public AudioClip fallingClip;
+    public float InvincibleTimer = Blastbeam.TimerTime;
 
     private void Update() {
-        if(isFlying==false)
+        InvincibleTimer -= Time.deltaTime;
+        if (isFlying==false)
             CheckTile();
     }
     protected override void CheckTile() {
@@ -24,22 +26,23 @@ public class PowerUP : Flyable {
                 break;
             }
         }
-    private void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.collider.GetComponent<Blastbeam>() != null) {
-            Destroy(this.gameObject);
-        }
-        if (collision.collider.GetComponent<PlayerMove>() != null) {
-            collision.collider.GetComponent<PlayerMove>().AddPowerUP(PowerType);
-            Destroy(this.gameObject);
-        }
-    }
+    //private void OnCollisionEnter2D(Collision2D collision) {
+    //    if (collision.collider.GetComponent<Blastbeam>() != null) {
+    //        Destroy(this.gameObject);
+    //    }
+    //    if (collision.collider.GetComponent<PlayerMove>() != null) {
+    //        collision.collider.GetComponent<PlayerMove>().AddPowerUP(PowerType);
+    //        Destroy(this.gameObject);
+    //    }
+    //}
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.GetComponent<Blastbeam>()!=null) {
             if (PowerType == PowerUPType.Diarrhea || PowerType == PowerUPType.Joint || PowerType == PowerUPType.Superspeed) {
                 FlyToTarget(MapController.Instance.GetRandomTargetTile(true,true));
             }
             else {
-                StartCoroutine(DestroyDelayed());
+                if(InvincibleTimer<=0)
+                    StartCoroutine(DestroyDelayed());
                 //Destroy(this.gameObject);
             }
         }

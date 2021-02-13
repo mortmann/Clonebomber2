@@ -44,6 +44,7 @@ public class PlayerData : MonoBehaviour {
         if (GetComponent<PlayerMove>()==false)
             gameObject.AddComponent<PlayerMove>();
         PlayerMove = GetComponent<PlayerMove>();
+        PlayerMove.Reset();
         IsDead = false;
         gameObject.layer = LayerMask.NameToLayer("Player");
         GetComponent<CircleCollider2D>().isTrigger = false;

@@ -23,7 +23,6 @@ public class Flyable : MonoBehaviour {
     private float maxHeight = 3;
     public bool isFalling;
     protected int oldGameObjectLayer;
-
     private void Awake() {
         Renderer = GetComponentInChildren<SpriteRenderer>();
     }
@@ -49,14 +48,8 @@ public class Flyable : MonoBehaviour {
             flyHeight = Mathf.Abs((heightParable.x * Mathf.Pow(x, 2)) + heightParable.y * x + (heightParable.z));
             Renderer.transform.localScale = new Vector3(Mathf.Clamp(flyHeight, 1, int.MaxValue),
                                                         Mathf.Clamp(flyHeight, 1, int.MaxValue), 1);
-
-            if (BombController.Instance.ParableFlight) {
-                flySpeed = Mathf.Abs((flySpeedParable.x * Mathf.Pow(x, 2)) + flySpeedParable.y * x + (flySpeedParable.z));
-                currDistance += flySpeed * Time.fixedDeltaTime;
-            } else {
-                currDistance += (flyDistance / flyDistance) * Time.fixedDeltaTime;
-            }
-            transform.position = Vector3.Lerp(startPosition, flyTarget, Mathf.Clamp01(currDistance / flyDistance));
+            currDistance += flySpeed * Time.fixedDeltaTime;
+            transform.position = Vector3.Lerp(startPosition, flyTarget, currDistance);
             //transform.position = Vector3.MoveTowards(transform.position, flyTarget, 5 * Time.fixedDeltaTime);
         }
         if (isFlying && transform.position==flyTarget || isFlying==false && isBouncing == false) {
@@ -82,7 +75,10 @@ public class Flyable : MonoBehaviour {
         oldGameObjectLayer = gameObject.layer;
         target = MapController.Instance.ClampVector(target);
         this.flyTarget = MapController.Instance.GetTile(target).GetCenter();
-        if(flyTarget == transform.position) {
+        Vector3 flyDist = transform.position - flyTarget;        
+        flySpeed = 12f;
+        flySpeed /= Mathf.Sqrt(flyDist.x * flyDist.x + flyDist.y * flyDist.y);
+        if (flyTarget == transform.position) {
             isBouncing = true;
             isRising = true;
             oldLayer = Renderer.sortingLayerName;

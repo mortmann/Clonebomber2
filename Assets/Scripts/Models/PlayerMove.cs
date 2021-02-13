@@ -28,6 +28,12 @@ public class PlayerMove : Flyable {
     public int NumberSpeeds => PlayerController.Instance.GetClampPowerUpValue(PowerUPType.Speed, powerUPTypeToAmount[PowerUPType.Speed]);
     public int Blastradius => PlayerController.Instance.GetClampPowerUpValue(PowerUPType.Blastradius, powerUPTypeToAmount[PowerUPType.Blastradius]);
     public bool CanThrowBombs => powerUPTypeToAmount[PowerUPType.Throw] > 0;
+
+    internal void Reset() {
+        isFalling = false;
+        isFlying = false;
+    }
+
     public bool CanPushBombs => powerUPTypeToAmount[PowerUPType.Push] > 0;
     public bool HasDiarrhea => powerUPTypeToAmount[PowerUPType.Diarrhea] > 0;
     public bool HasInvertedControls => powerUPTypeToAmount[PowerUPType.Joint] > 0;

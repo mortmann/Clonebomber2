@@ -19,7 +19,6 @@ public class BombController : MonoBehaviour {
     private float magnitudeDecreaseFactor=3f;
 
     public bool Shake { get; private set; }
-    public bool ParableFlight = true;
     internal static float ShakeAmount = 1.45f;
 
     void Start() {
