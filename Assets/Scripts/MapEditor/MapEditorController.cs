@@ -39,7 +39,6 @@ public class MapEditorController : MonoBehaviour {
         for (int y = 0; y < MapController.maxY; y++) {
             for (int x = 0; x < MapController.maxX; x++) {
                 GridMap.SetTile(new Vector3Int(x, y, 0), tile);
-                FloorMap.SetTile(new Vector3Int(x, y, 0), GetTile(TileType.Floor));
             }
         }
         
@@ -65,7 +64,7 @@ public class MapEditorController : MonoBehaviour {
         }
         Vector3 mousePosition3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int mousePositionInt = new Vector3Int(Mathf.FloorToInt(mousePosition3.x),
-                                                        Mathf.FloorToInt(mousePosition3.y),
+                                                        Mathf.Abs(Mathf.FloorToInt(mousePosition3.y)),
                                                         0
                                                     );
         if (mousePositionInt.x < 0 
@@ -74,10 +73,10 @@ public class MapEditorController : MonoBehaviour {
             || mousePositionInt.y > Tiles.GetLength(1) - 1) {
             return;
         }
-        if (Input.GetKey(KeyCode.Mouse0)) {
+        if (Input.GetMouseButton(0) || Input.GetKey(KeyCode.Mouse0)) {
             SetTile(CurrentTileType, mousePositionInt);
         }
-        if (Input.GetKeyDown(KeyCode.Mouse1)) {
+        if (Input.GetMouseButton(1) || Input.GetKeyDown(KeyCode.Mouse1)) {
             SetTile(TileType.Empty, mousePositionInt);
         }
     }
