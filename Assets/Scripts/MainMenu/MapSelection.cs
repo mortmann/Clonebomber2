@@ -19,7 +19,7 @@ public class MapSelection : MonoBehaviour {
     public Action UnselectAll { get; internal set; }
     Dictionary<int, List<string>> playerNumToMaps;
     Dictionary<string, MapSelect> nameToMapSelect;
-
+    bool isSetup = true;
     void Start() {
         Instance = this;
         AllMaps = new List<string>(MapController.GetAllMapNames());
@@ -49,6 +49,8 @@ public class MapSelection : MonoBehaviour {
             }
         }
         SelectedMaps.AddRange(AllMaps);
+        isSetup = false;
+        ShowMap(AllMaps[0]);
     }
 
     internal void ShowMap(string name) {
@@ -56,6 +58,8 @@ public class MapSelection : MonoBehaviour {
     }
 
     void OnMapClick(string name, bool select) {
+        if (isSetup)
+            return;
         if(select) {
             if(SelectedMaps.Contains(name)==false)
                 SelectedMaps.Add(name);

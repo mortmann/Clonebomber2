@@ -17,7 +17,7 @@ public class CustomAnimator : MonoBehaviour {
     float Timer;
     SpriteRenderer Renderer;
     Direction lastDirection = Direction.LEFT;
-    void OnEnable() {
+    void Start() {
         PlayerMove = GetComponentInParent<PlayerMove>();
         PlayerData = GetComponentInParent<PlayerData>();
         Renderer = GetComponent<SpriteRenderer>();

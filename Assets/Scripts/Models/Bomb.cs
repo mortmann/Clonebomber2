@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static MapController;
 
 public class Bomb : Flyable {
 
@@ -30,7 +31,7 @@ public class Bomb : Flyable {
         Renderer = GetComponentInChildren<SpriteRenderer>();
         HitBox = GetComponent<CircleCollider2D>();
         Rigidbody = GetComponent<Rigidbody2D>();
-        Collider2D[] c2ds = Physics2D.OverlapCircleAll(transform.position, HitBox.radius-0.1f);
+        Collider2D[] c2ds = Physics2D.OverlapCircleAll(transform.position, HitBox.radius - 0.1f);
         foreach (Collider2D c2d in c2ds) {
             if (c2d.GetComponent<PlayerMove>() == null) {
                 continue;
@@ -43,15 +44,15 @@ public class Bomb : Flyable {
 
     override protected void FixedUpdate() {
         base.FixedUpdate();
-        if (isFlying||isBouncing||isFalling)
+        if (isFlying || isBouncing || isFalling)
             return;
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
-        if (Vector3.Distance(transform.position,tt.GetCenter()) <= pushMove.magnitude * Time.fixedDeltaTime * Speed){
+        if (Vector3.Distance(transform.position, tt.GetCenter()) <= pushMove.magnitude * Time.fixedDeltaTime * Speed) {
             CheckTile();
         }
         explosionTimer -= Time.fixedDeltaTime;
         Timer += Time.fixedDeltaTime;
-        if(explosionTimer<=0) {
+        if (explosionTimer <= 0) {
             Explode();
             return;
         }
@@ -59,7 +60,7 @@ public class Bomb : Flyable {
             AnimationPos++;
             AnimationPos %= NumberOfSprites;
             float scale = 1 + 0.05f * ((float)AnimationPos / (float)NumberOfSprites);
-            Renderer.gameObject.transform.localScale =new Vector3(scale, scale);
+            Renderer.gameObject.transform.localScale = new Vector3(scale, scale);
             Timer = 0;
         }
         Renderer.sprite = BombSprites[AnimationPos];
@@ -68,24 +69,25 @@ public class Bomb : Flyable {
 
     private void Explode() {
         Blastbeam middle = Instantiate(BombController.Instance.BlastbeamPrefab);
-        middle.Show(BombController.Instance.GetDirectionSprites(Direction.MIDDLE).EndSprites,this,true);
+        middle.Show(BombController.Instance.GetDirectionSprites(Direction.MIDDLE).EndSprites, this, true);
         Direction[] directions = new Direction[4] { Direction.DOWN, Direction.UP, Direction.LEFT, Direction.RIGHT };
         Vector3[] dirs = new Vector3[4] { Vector2.down, Vector2.up, Vector2.left, Vector2.right };
         middle.transform.position = transform.position;
-        for (int i=0; i<4;i++) {
+        for (int i = 0; i < 4; i++) {
             for (int x = 1; x < Strength; x++) {
                 Vector3 pos = transform.position + x * dirs[i];
                 TileType tt = MapController.Instance.GetTileTypeAt(pos);
-                if (tt==TileType.Wall) {
+                if (tt == TileType.Wall) {
                     break;
                 }
                 Blastbeam beam = Instantiate(BombController.Instance.BlastbeamPrefab);
                 if (tt == TileType.Box) {
                     x = Strength - 1;
                 }
-                if (x == Strength-1) {
+                if (x == Strength - 1) {
                     beam.Show(BombController.Instance.GetDirectionSprites(directions[i]).EndSprites, this);
-                } else {
+                }
+                else {
                     beam.Show(BombController.Instance.GetDirectionSprites(directions[i]).MiddleSprites, this);
                 }
                 beam.transform.position = pos;
@@ -110,7 +112,7 @@ public class Bomb : Flyable {
     }
 
     internal void ResetTile() {
-        if(tile.Bomb==this) {
+        if (tile.Bomb == this) {
             tile.Bomb = null;
         }
     }
@@ -122,20 +124,23 @@ public class Bomb : Flyable {
             gameObject.layer = finalLayer;
         }
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
-        if (tt.HasBomb && tt.Bomb != this) {
-            if(isThrown) {
+        if (tt.HasBomb && tt.Bomb != this && pushMove.magnitude == 0) {
+            if (isThrown) {
                 Debug.Log("BOUNCE");
                 //go one move space over But on if Space
                 TileType nextType = MapController.Instance.GetTileTypeAt(tt.GetCenter() + flyMove);
-                if(nextType != TileType.Wall)
-                    FlyToTarget(tt.GetCenter() + flyMove,true); //go to next
+                if (nextType != TileType.Wall)
+                    FlyToTarget(tt.GetCenter() + flyMove, true); //go to next
                 else
                     FlyToTarget(transform.position, true); //bounce
-            } else {
+            }
+            else {
                 FlyToTarget(transform.position);
                 return;
             }
-        } else if(tt.HasBomb==false) {
+        }
+        else if (tt.HasBomb == false) {
+            tile.Bomb = null;
             tile = tt;
             tile.Bomb = this;
         }
@@ -188,10 +193,13 @@ public class Bomb : Flyable {
         }
     }
     public void OnTriggerEnter2D(Collider2D collision) {
+        if (isFlying)
+            return;
         Blastbeam pd = collision.GetComponent<Blastbeam>();
         if (pd != null) {
             explosionTimer = 0.05f;
         }
+
     }
     private IEnumerator Hole() {
         float time = 0.2f;
@@ -206,10 +214,12 @@ public class Bomb : Flyable {
         yield return null;
     }
     private void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.collider.GetComponent<PlayerData>() != null) {
+        if (isFlying == false) {
             pushMove = Vector3.zero;
             transform.position = new Vector3(Mathf.FloorToInt(transform.position.x) + 0.5f, Mathf.FloorToInt(transform.position.y) + 0.5f);
-        } else {
+            CheckTile();
+        }
+        else {
             flyTarget = transform.position;
         }
     }
@@ -219,5 +229,18 @@ public class Bomb : Flyable {
         if (gameObject != null)
             Destroy(gameObject);
     }
-
+    public HashSet<MapTile> BlastBeamTiles() {
+        return BlastBeamTiles(transform.position, Strength);
+    }
+    public static HashSet<MapTile> BlastBeamTiles(Vector3 postition, int strength) {
+        HashSet<MapTile> tiles = new HashSet<MapTile> { MapController.Instance.GetTile(postition) };
+        Vector3[] dirs = new Vector3[4] { Vector2.down, Vector2.up, Vector2.left, Vector2.right };
+        for (int i = 0; i < 4; i++) {
+            for (int x = 1; x < strength; x++) {
+                Vector3 pos = postition + x * dirs[i];
+                tiles.Add(MapController.Instance.GetTile(pos));
+            }
+        }
+        return tiles;
+    }
 }

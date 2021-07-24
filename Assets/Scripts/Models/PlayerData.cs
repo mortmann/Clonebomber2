@@ -24,13 +24,12 @@ public class PlayerData : MonoBehaviour {
     public AudioSource audioSource;
     internal bool disabled;
     internal Dictionary<KeyInputs, KeyCode> inputToCode;
-
+    public bool isAI;
     public int numberOfWins = 0;
 
     Bomb killedByBomb;
 
-    void Start() {
-        PlayerMove = GetComponent<PlayerMove>();
+    void OnStart() {
         audioSource = GetComponent<AudioSource>();
         customAnimator = GetComponentInChildren<CustomAnimator>();
     }
@@ -41,9 +40,16 @@ public class PlayerData : MonoBehaviour {
         customAnimator = GetComponentInChildren<CustomAnimator>();
         customAnimator?.gameObject.SetActive(true);
         customAnimator?.Reset();
-        if (GetComponent<PlayerMove>()==false)
-            gameObject.AddComponent<PlayerMove>();
-        PlayerMove = GetComponent<PlayerMove>();
+        if (isAI) {
+            if (GetComponent<AIMove>() == false)
+                gameObject.AddComponent<AIMove>();
+            PlayerMove = GetComponent<AIMove>();
+        }
+        else {
+            if (GetComponent<PlayerMove>() == false)
+                gameObject.AddComponent<PlayerMove>();
+            PlayerMove = GetComponent<PlayerMove>();
+        }
         PlayerMove.Reset();
         IsDead = false;
         gameObject.layer = LayerMask.NameToLayer("Player");
@@ -57,6 +63,7 @@ public class PlayerData : MonoBehaviour {
         this.disabled = setter.isDisabled;
         this.Character = setter.character;
         this.Team = setter.team;
+        this.isAI = setter.isAI;
     }
     public void OnTriggerEnter2D(Collider2D collider) {
         if(collider.GetComponent<Blastbeam>() != null) {

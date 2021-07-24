@@ -13,11 +13,12 @@ public class Pathfinding2D : MonoBehaviour
     Vector3 targetPos;
     void Start()
     {
-        grid = FindObjectOfType<Grid2D>();
     }
 
     public void FindPath(Vector3 startPos, Vector3 targetPos)
     {
+        if(grid == null)
+            grid = FindObjectOfType<Grid2D>();
         //get player and target position in grid coords
         seekerNode = grid.NodeFromWorldPoint(startPos);
         targetNode = grid.NodeFromWorldPoint(targetPos);

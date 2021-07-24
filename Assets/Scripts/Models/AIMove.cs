@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AIMove : PlayerMove {
-
+    
     KeyInputs? currentInput = null;
-    bool doAction;
+    public bool doAction;
+    
     public void SetDirection(Vector3 dir) {
-        if(dir.x > dir.y) {
+        if(dir.sqrMagnitude == 0) {
+            currentInput = null;
+            return;
+        }
+        if(Mathf.Abs(dir.x) > Mathf.Abs(dir.y)) {
             if (dir.x > 0) {
                 currentInput = KeyInputs.Right;
             }
@@ -22,6 +27,10 @@ public class AIMove : PlayerMove {
                 currentInput = KeyInputs.Down;
             }
         }
+    }
+    protected override void DoAction() {
+        base.DoAction();
+        doAction = false;
     }
     protected override bool IsAction() {
         return doAction;

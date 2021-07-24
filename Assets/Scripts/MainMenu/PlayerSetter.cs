@@ -33,6 +33,7 @@ public class PlayerSetter : MonoBehaviour {
     };
     public int controller=-1;
     internal int playerNumber;
+    public bool isAI;
 
     void Start() {
         SetUpInputDropDown();
@@ -75,6 +76,10 @@ public class PlayerSetter : MonoBehaviour {
         else if (controller != -1) {
             InputDevicesDropDown.value = controller;
             OnValueChange(controller);
+        } 
+        if(isAI) {
+            InputDevicesDropDown.value = 2;
+            OnValueChange(2);
         }
         InputDevicesDropDown.RefreshShownValue();
     }
@@ -83,7 +88,8 @@ public class PlayerSetter : MonoBehaviour {
         InputDevicesDropDown.ClearOptions();
         inputs = new List<string> {
             "Disabled",
-            "Keyboard"
+            "Keyboard",
+            "Computer"
         };
         string[] joysticks = new string[8];
         Array.Copy(Input.GetJoystickNames(), joysticks, Mathf.Clamp(Input.GetJoystickNames().Length, 0, 8));
@@ -109,6 +115,7 @@ public class PlayerSetter : MonoBehaviour {
         character = playerSetter.character;
         isDisabled = playerSetter.IsDisabled;
         team = playerSetter.team;
+        isAI = playerSetter.IsAI;
     }
 
     private void ChangeTeam() {
@@ -169,6 +176,17 @@ public class PlayerSetter : MonoBehaviour {
             PlayPanel.Instance.RemovePlayerSettings(this);
             color.a = 0.5f;
             PlayerImage.color = color;
+            isAI = false;
+            return;
+        } else 
+        if(inputs[select] == "Computer") {
+            UpButton.interactable = false;
+            DownButton.interactable = false;
+            LeftButton.interactable = false;
+            RightButton.interactable = false;
+            ActionButton.interactable = false;
+            isDisabled = false;
+            isAI = true;
             return;
         }
         else
@@ -190,12 +208,13 @@ public class PlayerSetter : MonoBehaviour {
         }
         PlayPanel.Instance.AddPlayerSetter(this);
         isDisabled = false;
+        isAI = false;
         color.a = 1f;
         PlayerImage.color = color;
     }
 
     void Update() {
-        if(Input.GetJoystickNames().Length != InputDevicesDropDown.options.Count - 2) { //-2 for keyboard and disabled
+        if(Input.GetJoystickNames().Length != InputDevicesDropDown.options.Count - 3) { //-3 for keyboard and disabled and ai
             string option = InputDevicesDropDown.options[InputDevicesDropDown.value].text;
             SetUpInputDropDown();
             InputDevicesDropDown.value = Mathf.Clamp(InputDevicesDropDown.options.FindIndex(x => x.text == option),0,int.MaxValue);
@@ -208,7 +227,8 @@ public class PlayerSetter : MonoBehaviour {
             inputToCode = inputToCode,
             controller = controller,
             playerNumber = playerNumber,
-            IsDisabled = isDisabled
+            IsDisabled = isDisabled,
+            IsAI = isAI
         };
     }
     private void OnDisable() {
@@ -222,6 +242,8 @@ public class PlayerSetter : MonoBehaviour {
         public Character character;
         [JsonProperty]
         public Teams team;
+        [JsonProperty]
+        public bool IsAI;
         [JsonProperty]
         public Dictionary<KeyInputs, KeyCode> inputToCode = new Dictionary<KeyInputs, KeyCode> {
         { KeyInputs.Up, KeyCode.UpArrow },

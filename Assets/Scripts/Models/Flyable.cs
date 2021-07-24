@@ -31,11 +31,11 @@ public class Flyable : MonoBehaviour {
             return;
         if(isBouncing) {
             if (isRising) {
-                flyHeight += 0.5f * 9.81f * Time.deltaTime;
+                flyHeight += 6f * Time.deltaTime;
                 if (flyHeight > 4.5f)
                     isRising = false;
             } else {
-                flyHeight -= 0.5f * 9.81f * Time.deltaTime;
+                flyHeight -= 6f * Time.deltaTime;
                 if (flyHeight <= 1) {
                     isBouncing = false;
                 }
@@ -76,7 +76,7 @@ public class Flyable : MonoBehaviour {
         target = MapController.Instance.ClampVector(target);
         this.flyTarget = MapController.Instance.GetTile(target).GetCenter();
         Vector3 flyDist = transform.position - flyTarget;        
-        flySpeed = 12f;
+        flySpeed = 6f;
         flySpeed /= Mathf.Sqrt(flyDist.x * flyDist.x + flyDist.y * flyDist.y);
         if (flyTarget == transform.position) {
             isBouncing = true;

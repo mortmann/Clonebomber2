@@ -2,21 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static MapController;
+
 public enum PowerUPType { Speed, Blastradius, Bomb, Push, Throw, Diarrhea, Joint, Superspeed }
 public class PowerUP : Flyable {
 
     public PowerUPType PowerType;
     public AudioClip fallingClip;
     public float InvincibleTimer = Blastbeam.TimerTime;
-
+    public MapTile CurrentTile;
     private void Update() {
         InvincibleTimer -= Time.deltaTime;
         if (isFlying==false)
             CheckTile();
     }
     protected override void CheckTile() {
-        MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
-        switch (tt.Type) {
+        CurrentTile = MapController.Instance.GetTile(transform.position);
+        switch (CurrentTile.Type) {
             case TileType.Empty:
                 if (gameObject.layer == LayerMask.NameToLayer("FLYING"))
                     return;
