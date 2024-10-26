@@ -26,7 +26,7 @@ public class Bomb : Flyable {
     internal int finalLayer;
     internal int insideLayer;
     internal int startLayer;
-
+    private bool isInteracting;
     void Start() {
         Renderer = GetComponentInChildren<SpriteRenderer>();
         HitBox = GetComponent<CircleCollider2D>();
@@ -44,7 +44,7 @@ public class Bomb : Flyable {
 
     override protected void FixedUpdate() {
         base.FixedUpdate();
-        if (isFlying || isBouncing || isFalling)
+        if (isFlying || isBouncing || isFalling || isInteracting)
             return;
         MapController.MapTile tt = MapController.Instance.GetTile(transform.position);
         if (Vector3.Distance(transform.position, tt.GetCenter()) <= pushMove.magnitude * Time.fixedDeltaTime * Speed) {
@@ -155,6 +155,7 @@ public class Bomb : Flyable {
                 tile.Bomb = null;
                 break;
             case TileType.Hole:
+                isInteracting = true;
                 explosionTimer = 12f;
                 transform.position = tt.GetCenter();
                 Renderer.gameObject.SetActive(false);
@@ -210,6 +211,7 @@ public class Bomb : Flyable {
         Renderer.gameObject.SetActive(true);
         Vector2 target = MapController.Instance.GetRandomTargetTile(transform.position, true, false);
         FlyToTarget(target);
+        isInteracting = false;
         explosionTimer = 0f; // need to be checked
         yield return null;
     }

@@ -14,7 +14,15 @@ public class Flyable : MonoBehaviour {
     Vector3 flySpeedParable;
     protected Vector3 flyMove;
     protected Vector3 flyTarget;
-    public bool isFlying { protected set; get; }
+    private bool _isFlying;
+    public bool isFlying { 
+        protected set {
+            _isFlying = value;
+        }
+        get {
+            return _isFlying;
+        } 
+    }
     public float flyTime { private set; get; }
     string oldLayer = "";
     public bool isThrown;
@@ -48,7 +56,11 @@ public class Flyable : MonoBehaviour {
             flyHeight = Mathf.Abs((heightParable.x * Mathf.Pow(x, 2)) + heightParable.y * x + (heightParable.z));
             Renderer.transform.localScale = new Vector3(Mathf.Clamp(flyHeight, 1, int.MaxValue),
                                                         Mathf.Clamp(flyHeight, 1, int.MaxValue), 1);
-            currDistance += flySpeed * Time.fixedDeltaTime;
+            if(Input.GetKey(KeyCode.Space)) {
+                currDistance += 0.01f * flySpeed * Time.fixedDeltaTime;
+            } else {
+                currDistance += flySpeed * Time.fixedDeltaTime;
+            }
             transform.position = Vector3.Lerp(startPosition, flyTarget, currDistance);
             //transform.position = Vector3.MoveTowards(transform.position, flyTarget, 5 * Time.fixedDeltaTime);
         }
