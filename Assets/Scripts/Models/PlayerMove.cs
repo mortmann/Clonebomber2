@@ -59,9 +59,6 @@ public class PlayerMove : Flyable {
     Dictionary<PowerUPType, int> startUpgrades = new Dictionary<PowerUPType, int> {
         {PowerUPType.Bomb, 1 },
         {PowerUPType.Blastradius,2 },
-                //{PowerUPType.Throw,2 },
-                //        {PowerUPType.Push,2 },
-
     };
     public void Start() {
         audioSource = GetComponent<AudioSource>();
@@ -127,7 +124,7 @@ public class PlayerMove : Flyable {
             b.FlyToTarget(this.transform.position + LastMove * throwDistance, true);
         }
         else
-                    if (PlacedBombs < NumberBombs) {
+        if (PlacedBombs < NumberBombs) {
             MapController.MapTile mt = MapController.Instance.GetTile(transform.position);
             if (HasDiarrhea || mt.HasBomb == false) {
                 BombCooldown = BombCooldownTime;
@@ -216,8 +213,8 @@ public class PlayerMove : Flyable {
     private void RemoveNegativeEffect() {
         if (HasNegativEffect == false)
             return;
-        lastEffect = PowerUPType.Bomb;
         powerUPTypeToAmount[lastEffect] = 0;
+        lastEffect = PowerUPType.Bomb;
     }
 
     protected override void CheckTile() {
@@ -238,21 +235,11 @@ public class PlayerMove : Flyable {
                 break;
         }
     }
-    //private IEnumerator Falling() {
-    //    float overtime = 1f;
-    //    while (transform.localScale.x > 0.01f) {
-    //        float modifier = 0.01f * overtime;
-    //        transform.localScale = new Vector3(transform.localScale.x - modifier * 9.81f * Time.fixedDeltaTime,
-    //                                             transform.localScale.y - modifier * 9.81f * Time.fixedDeltaTime);
-    //        overtime += Time.fixedDeltaTime;
-    //        yield return new WaitForEndOfFrame();
-    //    }
-    //    Destroy(this.gameObject);
-    //    yield return null;
-    //}
+    
     private void OnBombExplode(Bomb b) {
         PlacedBombs--;
     }
+
     internal void AddPowerUP(PowerUPType powerType) {
         if (HasNegativEffect) {
             MapController.Instance.CreateAndFlyPowerUP(lastEffect, PlayerData);
