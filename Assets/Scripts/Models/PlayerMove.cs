@@ -31,7 +31,7 @@ public class PlayerMove : Flyable {
 
     internal void Reset() {
         isFalling = false;
-        isFlying = false;
+        //isFlying = false;
     }
 
     public bool CanPushBombs => powerUPTypeToAmount[PowerUPType.Push] > 0;
@@ -59,11 +59,8 @@ public class PlayerMove : Flyable {
     Dictionary<PowerUPType, int> startUpgrades = new Dictionary<PowerUPType, int> {
         {PowerUPType.Bomb, 1 },
         {PowerUPType.Blastradius,2 },
-                {PowerUPType.Throw,2 },
-                        {PowerUPType.Push,2 },
-
     };
-    void Start() {
+    public void Start() {
         audioSource = GetComponent<AudioSource>();
         moves = new List<Vector3>();
         Rigidbody = GetComponent<Rigidbody2D>();
@@ -78,15 +75,10 @@ public class PlayerMove : Flyable {
     }
 
     void Update() {
-        if (isFalling || isFlying)
-            return;
-        CheckTile();
-        if (PlayerData.IsDead)
-            return;
         if (IsUPDown()) {
             moves.Remove(Vector3.up);
-            moves.Insert(0,Vector3.up);
-        } 
+            moves.Insert(0, Vector3.up);
+        }
         if (IsDownDown()) {
             moves.Remove(Vector3.down);
             moves.Insert(0, Vector3.down);
@@ -111,26 +103,35 @@ public class PlayerMove : Flyable {
         if (IsLeftUp()) {
             moves.Remove(Vector3.left);
         }
+        if (isFalling || isFlying || isBouncing)
+            return;
+        CheckTile();
+        if (PlayerData.IsDead)
+            return;
         if (IsAction() || HasDiarrhea) {
-            if (CanThrowBombs && MapController.Instance.GetTile(transform.position).Bomb != null) {
-                Bomb b = MapController.Instance.GetTile(transform.position).Bomb;
-                b.ResetTile();
-                //gameObject.layer = LayerMask.NameToLayer("Player");
-                b.FlyToTarget(this.transform.position + LastMove * throwDistance, true);
-            }
-            else
-            if (PlacedBombs < NumberBombs) {
-                MapController.MapTile mt = MapController.Instance.GetTile(transform.position);
-                if(HasDiarrhea || mt.HasBomb == false) {
-                    BombCooldown = BombCooldownTime;
-                    lastPlacedBomb = BombController.Instance.PlaceBomb(PlayerData.Character, transform.position, this, HasDiarrhea);
-                    lastPlacedBomb.OnDestroycb += OnBombExplode;
-                    PlacedBombs++;
-                }
-            }
+            DoAction();
         }
         if (BombCooldown > 0) {
             BombCooldown -= Time.deltaTime;
+        }
+    }
+
+    protected virtual void DoAction() {
+        if (CanThrowBombs && MapController.Instance.GetTile(transform.position).Bomb != null) {
+            Bomb b = MapController.Instance.GetTile(transform.position).Bomb;
+            b.ResetTile();
+            //gameObject.layer = LayerMask.NameToLayer("Player");
+            b.FlyToTarget(this.transform.position + LastMove * throwDistance, true);
+        }
+        else
+        if (PlacedBombs < NumberBombs) {
+            MapController.MapTile mt = MapController.Instance.GetTile(transform.position);
+            if (HasDiarrhea || mt.HasBomb == false) {
+                BombCooldown = BombCooldownTime;
+                lastPlacedBomb = BombController.Instance.PlaceBomb(PlayerData.Character, transform.position, this, HasDiarrhea);
+                lastPlacedBomb.OnDestroycb += OnBombExplode;
+                PlacedBombs++;
+            }
         }
     }
 
@@ -191,7 +192,7 @@ public class PlayerMove : Flyable {
 
     protected override void FixedUpdate() {
         base.FixedUpdate();
-        if (isFalling || isFlying) 
+        if (isFalling || isFlying || isBouncing) 
             return;
         if (moves.Count > 0) {
             LastMove = LastDirection;
@@ -201,7 +202,7 @@ public class PlayerMove : Flyable {
             Rigidbody.MovePosition(transform.position + LastMove * actualSpeed * Time.fixedDeltaTime);
         }
         if (NegativeEffectTimer > 0) {
-            NegativeEffectTimer -= Time.deltaTime;
+            NegativeEffectTimer -= Time.fixedDeltaTime;
         }
         if (NegativeEffectTimer < 0) {
             NegativeEffectTimer = 0;
@@ -212,8 +213,8 @@ public class PlayerMove : Flyable {
     private void RemoveNegativeEffect() {
         if (HasNegativEffect == false)
             return;
-        lastEffect = PowerUPType.Bomb;
         powerUPTypeToAmount[lastEffect] = 0;
+        lastEffect = PowerUPType.Bomb;
     }
 
     protected override void CheckTile() {
@@ -234,21 +235,11 @@ public class PlayerMove : Flyable {
                 break;
         }
     }
-    //private IEnumerator Falling() {
-    //    float overtime = 1f;
-    //    while (transform.localScale.x > 0.01f) {
-    //        float modifier = 0.01f * overtime;
-    //        transform.localScale = new Vector3(transform.localScale.x - modifier * 9.81f * Time.fixedDeltaTime,
-    //                                             transform.localScale.y - modifier * 9.81f * Time.fixedDeltaTime);
-    //        overtime += Time.fixedDeltaTime;
-    //        yield return new WaitForEndOfFrame();
-    //    }
-    //    Destroy(this.gameObject);
-    //    yield return null;
-    //}
+    
     private void OnBombExplode(Bomb b) {
         PlacedBombs--;
     }
+
     internal void AddPowerUP(PowerUPType powerType) {
         if (HasNegativEffect) {
             MapController.Instance.CreateAndFlyPowerUP(lastEffect, PlayerData);

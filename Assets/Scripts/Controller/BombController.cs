@@ -20,7 +20,7 @@ public class BombController : MonoBehaviour {
 
     public bool Shake { get; private set; }
     internal static float ShakeAmount = 1.45f;
-
+    public List<Bomb> AllBombs = new List<Bomb>();
     void Start() {
         normalCameraPos = Camera.main.transform.position;
         Instance = this;
@@ -64,7 +64,8 @@ public class BombController : MonoBehaviour {
         bomb.Set(BombSpritesList.Find(x => x.type == type).Sprites, PlayerMove.Blastradius, type);
         if (mt.HasBomb == false)
             mt.Bomb = bomb;
-        bomb.OnExplodecb += (b) => { PlayExplodeSound(bomb); };
+        AllBombs.Add(bomb);
+        bomb.OnExplodecb += (b) => { AllBombs.Remove(bomb);  PlayExplodeSound(bomb); };
         return bomb;
     }
 

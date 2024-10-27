@@ -14,7 +14,15 @@ public class Flyable : MonoBehaviour {
     Vector3 flySpeedParable;
     protected Vector3 flyMove;
     protected Vector3 flyTarget;
-    public bool isFlying { protected set; get; }
+    private bool _isFlying;
+    public bool isFlying { 
+        protected set {
+            _isFlying = value;
+        }
+        get {
+            return _isFlying;
+        } 
+    }
     public float flyTime { private set; get; }
     string oldLayer = "";
     public bool isThrown;
@@ -31,11 +39,11 @@ public class Flyable : MonoBehaviour {
             return;
         if(isBouncing) {
             if (isRising) {
-                flyHeight += 0.5f * 9.81f * Time.deltaTime;
+                flyHeight += 6f * Time.deltaTime;
                 if (flyHeight > 4.5f)
                     isRising = false;
             } else {
-                flyHeight -= 0.5f * 9.81f * Time.deltaTime;
+                flyHeight -= 6f * Time.deltaTime;
                 if (flyHeight <= 1) {
                     isBouncing = false;
                 }
@@ -48,7 +56,11 @@ public class Flyable : MonoBehaviour {
             flyHeight = Mathf.Abs((heightParable.x * Mathf.Pow(x, 2)) + heightParable.y * x + (heightParable.z));
             Renderer.transform.localScale = new Vector3(Mathf.Clamp(flyHeight, 1, int.MaxValue),
                                                         Mathf.Clamp(flyHeight, 1, int.MaxValue), 1);
-            currDistance += flySpeed * Time.fixedDeltaTime;
+            if(Input.GetKey(KeyCode.Space)) {
+                currDistance += 0.01f * flySpeed * Time.fixedDeltaTime;
+            } else {
+                currDistance += flySpeed * Time.fixedDeltaTime;
+            }
             transform.position = Vector3.Lerp(startPosition, flyTarget, currDistance);
             //transform.position = Vector3.MoveTowards(transform.position, flyTarget, 5 * Time.fixedDeltaTime);
         }
@@ -76,7 +88,7 @@ public class Flyable : MonoBehaviour {
         target = MapController.Instance.ClampVector(target);
         this.flyTarget = MapController.Instance.GetTile(target).GetCenter();
         Vector3 flyDist = transform.position - flyTarget;        
-        flySpeed = 12f;
+        flySpeed = 6f;
         flySpeed /= Mathf.Sqrt(flyDist.x * flyDist.x + flyDist.y * flyDist.y);
         if (flyTarget == transform.position) {
             isBouncing = true;

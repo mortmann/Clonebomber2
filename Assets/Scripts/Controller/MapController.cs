@@ -37,9 +37,9 @@ public class MapController : MonoBehaviour {
     public Sprite RandomBoxSprite;
 
     public PowerUP PowerUPPrefab;
-
     
     Dictionary<TileType, Tile> typeToTileBase;
+    private Grid2D grid2d;
 
     public MapTile[,] Tiles { get; private set; }
     List<MapTile> ListOfTiles;
@@ -61,8 +61,7 @@ public class MapController : MonoBehaviour {
     void Awake() {
         Instance = this;
         typeToTileBase = new Dictionary<TileType, Tile>();
-        
-        ListOfTiles = new List<MapTile>();
+        grid2d = FindObjectOfType<Grid2D>();
         LoadTileBases();
         if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name=="GameScene") {
             LoadMap(PlayerController.Instance.NextMapString,true);
@@ -90,30 +89,69 @@ public class MapController : MonoBehaviour {
                 Tiles[mx, my] = new MapTile(TileType.Empty, mx, my);
             }
         }
-
-        Dictionary<int, MapTile> dicSpawns = new Dictionary<int, MapTile>();
-        string[] allLines = GetMapFile(name);
-        int y = 1; //because outer layer be empty
-        for (int i = allLines.Length-1; i >= 2; i--) {
-            string line = allLines[i];
-            int x = 1; //because outer layer be empty
-            foreach (char c in line) {
-                Tiles[x, y] = new MapTile(MapTile.ConvertChar(c), x, y);
-                if (Tiles[x, y].Type == TileType.Spawn) {
-                    dicSpawns[int.Parse("" + c)] = Tiles[x, y];
+        MapFileData map = LoadMapFile(name);
+        ListOfTiles = new List<MapTile>();
+        for (int x = 0; x < map.Tiles.GetLength(0); x++) {
+            for (int y = 0; y < map.Tiles.GetLength(1); y++) {
+                Tiles[x + 1, y + 1].Type = map.Tiles[x, y];
+                ListOfTiles.Add(Tiles[x + 1, y + 1]);
+            }
+        }
+        SetTileMaps();
+        for (int x = 0; x < Tiles.GetLength(0); x++) {
+            for (int y = 0; y < Tiles.GetLength(1); y++) {
+                if (Tiles[x, y].Type == TileType.Box) {
+                    ChangeNeigbhoursBoxCount(x, y, 1);
                 }
-                ListOfTiles.Add(Tiles[x, y]);
+            }
+        }
+        //string debugS = "";
+        //for (int y = 0; y < Tiles.GetLength(1); y++) {
+        //    for (int x = 0; x < Tiles.GetLength(0); x++) {
+        //        debugS += Tiles[x, y].BoxCount;
+        //    }
+        //    debugS += "\n";
+        //}
+        //Debug.Log(debugS);
+        Spawns = new MapTile[map.Spawns.Length];
+        for (int i = 0; i < map.Spawns.Length; i++) {
+            Spawns[i] = Tiles[map.Spawns[i].x + 1, map.Spawns[i].y + 1];
+        }
+        if (setSpawns)
+            PlayerController.Instance.SetSpawnPosition(new List<MapTile>( Spawns ));
+        if (grid2d != null)
+            grid2d.RecalculateGrid();
+    }
+
+    public static MapFileData LoadMapFile(string fileName) {
+        MapFileData data = new MapFileData();
+        data.Tiles = new TileType[MapController.maxX, MapController.maxY];
+        Dictionary<int, Vector3Int> dicSpawns = new Dictionary<int, Vector3Int>();
+        string[] allLines = GetMapFile(fileName);
+        data.Author = allLines[0];
+        int.TryParse(allLines[1], out data.Number);
+        int y = 0; //because outer layer be empty
+        for (int i = allLines.Length - 1; i >= 2; i--) {
+            string line = allLines[i];
+            int x = 0; //because outer layer be empty
+            foreach (char c in line) {
+                if (x >= maxX || y >= maxY)
+                    continue;
+                data.Tiles[x, y] = MapTile.ConvertChar(c);
+                if (data.Tiles[x, y] == TileType.Spawn) {
+                    dicSpawns[int.Parse("" + c)] = new Vector3Int(x, y, 0);
+                }
                 x++;
             }
             y++;
         }
-        Spawns = new MapTile[dicSpawns.Count];
-        foreach (int i in dicSpawns.Keys) {
-            Spawns[i] = dicSpawns[i];
+        data.Spawns = new Vector3Int[dicSpawns.Count];
+        for (int i = 0; i < PlayerController.MaxPlayer; i++) {
+            if (dicSpawns.ContainsKey(i) && dicSpawns[i] != null) {
+                data.Spawns[i] = dicSpawns[i];
+            }
         }
-        if(setSpawns)
-            PlayerController.Instance.SetSpawnPosition(new List<MapTile>( Spawns ));
-        SetTileMaps();
+        return data;
     }
 
     internal TileType GetTileTypeAt(Vector3 pos) {
@@ -290,6 +328,27 @@ public class MapController : MonoBehaviour {
         TileType tt = Tiles[vector3Int.x, vector3Int.y].Type;
         if (tt != type)
             return;
+        switch (type) {            
+            case TileType.Ice:
+            case TileType.Hole:
+            case TileType.ArrowUp:
+            case TileType.ArrowDown:
+            case TileType.ArrowLeft:
+            case TileType.ArrowRight:
+            case TileType.Floor:
+                grid2d.UpdateTile(vector3Int.x, vector3Int.y, true);
+                break;
+            case TileType.Box:
+                ChangeNeigbhoursBoxCount(vector3Int.x, vector3Int.y, -1);
+                grid2d.UpdateTile(vector3Int.x, vector3Int.y, false);
+                break;
+            case TileType.ExplodedBox:
+            case TileType.RandomBox:
+            case TileType.Wall:
+                grid2d.UpdateTile(vector3Int.x, vector3Int.y, false);
+                break;
+            
+        }
         if (tt == TileType.Box||tt==TileType.ExplodedBox) {
             Tiles[Mathf.FloorToInt(vector3Int.x), Mathf.FloorToInt(vector3Int.y)].Type = TileType.Floor;
             OnBoxDestroy(vector3Int);
@@ -304,6 +363,14 @@ public class MapController : MonoBehaviour {
             iceMap.SetTile(vector3Int, null);
             triggerMap.SetTile(vector3Int, null);
             Tiles[Mathf.FloorToInt(vector3Int.x), Mathf.FloorToInt(vector3Int.y)].Type = TileType.Empty;
+        }
+    }
+
+    private void ChangeNeigbhoursBoxCount(int x, int y, int change) {
+        foreach(MapTile t in GetTile(new Vector3(x, y)).GetNeighbours()) {
+            if (t == null)
+                continue;
+            t.BoxCount += change;
         }
     }
 
@@ -410,8 +477,17 @@ public class MapController : MonoBehaviour {
     public class MapTile {
         public readonly int x;
         public readonly int y;
-        public TileType Type = TileType.Empty;
-        public Bomb Bomb;
+        public Action<MapTile, TileType, TileType> cbTileTypeChange;
+        private TileType type = TileType.Empty;
+        private Bomb _bomb;
+        public HashSet<PowerUP> PowerUPs = new HashSet<PowerUP>();
+        public Bomb Bomb {
+            get { return _bomb; }
+            set {
+                _bomb = value;
+                MapController.Instance.UpdateGrid(this);
+            }
+        }
         public bool HasBomb => Bomb != null;
         public MapTile(TileType type, int x, int y) {
             this.x = x;
@@ -420,7 +496,23 @@ public class MapController : MonoBehaviour {
         }
 
         public Vector2 Vector => new Vector2(x, y);
+        public Vector3 Vector3 => new Vector3(x, y);
 
+        public int BoxCount { get; internal set; }
+        public TileType Type { get => type; 
+            set {
+                cbTileTypeChange?.Invoke(this, type, value);
+                type = value;
+            }
+        }
+        public MapTile[] GetNeighbours() {
+            MapTile[] tiles = new MapTile[4];
+            tiles[0] = MapController.Instance.GetTile (new Vector3(x - 1, y));
+            tiles[1] = MapController.Instance.GetTile(new Vector3(x + 1, y));
+            tiles[2] = MapController.Instance.GetTile(new Vector3(x, y - 1));
+            tiles[3] = MapController.Instance.GetTile(new Vector3(x, y + 1));
+            return tiles;
+        }
         internal Vector3 GetCenter() {
             return new Vector3(x + 0.5f, y + 0.5f);
         }
@@ -456,5 +548,16 @@ public class MapController : MonoBehaviour {
             }
 
         }
+    }
+
+    private void UpdateGrid(MapTile mapTile) {
+        grid2d.UpdateTile(mapTile.x, mapTile.y, mapTile.HasBomb);
+    }
+
+    public class MapFileData {
+        public string Author;
+        public int Number;
+        public TileType[,] Tiles;
+        public Vector3Int[] Spawns;
     }
 }

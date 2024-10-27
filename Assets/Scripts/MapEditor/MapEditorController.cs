@@ -103,7 +103,8 @@ public class MapEditorController : MonoBehaviour {
             if (Spawns.Count == PlayerController.MaxPlayer) {
                 SetTile(TileType.Floor, Spawns[0]);
             }
-            Spawns.Add(position);
+            if(Spawns.Exists(p=>p.x==position.x&&p.y==position.y) == false)
+                Spawns.Add(position);
         }
         if(addChanges) {
             changes.Push(new TileChange {

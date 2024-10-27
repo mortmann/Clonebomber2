@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -51,7 +52,7 @@ public class Grid2D : MonoBehaviour
         }
     }
     void Update() {
-        RecalculateGrid();
+        //RecalculateGrid();
     }
     public void RecalculateGrid() {
         for (int x = 0; x < gridSizeX; x++) {
@@ -116,13 +117,10 @@ public class Grid2D : MonoBehaviour
 
     public Node2D NodeFromWorldPoint(Vector3 worldPosition)
     {
-        int x = Mathf.RoundToInt(worldPosition.x - offset.x - 1 + (gridSizeX / 2));
-        int y = Mathf.RoundToInt(worldPosition.y - offset.y + (gridSizeY / 2));
+        int x = Mathf.FloorToInt(worldPosition.x - offset.x + (gridSizeX / 2));
+        int y = Mathf.FloorToInt(worldPosition.y - offset.y + (gridSizeY / 2));
         return Grid[x, y];
     }
-
-
-    
     //Draws visual representation of grid
     void OnDrawGizmos()
     {
@@ -141,5 +139,11 @@ public class Grid2D : MonoBehaviour
 
             }
         }
+    }
+
+    internal void UpdateTile(int x, int y, bool obstacle) {
+        if (x >= Grid.GetLength(0) || y >= Grid.GetLength(1))
+            return;
+        Grid[x, y].SetObstacle(obstacle);
     }
 }

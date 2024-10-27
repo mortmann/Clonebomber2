@@ -115,25 +115,18 @@ public class MapEditorMenu : PauseMenu {
     public void LoadFile() {
         if (string.IsNullOrEmpty(currentLoadSaveGame))
             return;
-        TileType[,] Tiles = new TileType[MapController.maxX, MapController.maxY];
-        string[] lines = MapController.GetMapTileFileStrings(currentLoadSaveGame);
-        Vector3Int[] spawns = new Vector3Int[PlayerController.MaxPlayer];
-        for (int y = 0; y < lines.Length; y++) {
-            for (int x = 0; x < lines[y].Length; x++) {
-                Tiles[x, y] = MapController.MapTile.ConvertChar(lines[y][x]);
-                if(Tiles[x, y]==TileType.Spawn) {
-                    spawns[int.Parse(""+lines[y][x])] = new Vector3Int(x, y, 0);
-                }
+        MapController.MapFileData map = MapController.LoadMapFile(currentLoadSaveGame);
+        for (int x = 0; x < MapController.maxX; x++) {
+            for (int y = 0; y < MapController.maxY; y++) {
+                MapEditorController.Instance.SetTile(map.Tiles[x, y], new Vector3Int(x, y, 0));
             }
         }
-        for (int x = 0; x < Tiles.GetLength(0); x++) {
-            for (int y = 0; y < Tiles.GetLength(1); y++) {
-                MapEditorController.Instance.SetTile(Tiles[x, y], new Vector3Int(x,y,0));
-            }
+        for(int i = 0; i<map.Spawns.Length; i++) {
+            MapEditorController.Instance.Spawns.Add(map.Spawns[i]);
         }
         MapEditorController.Instance.ResetChanges();
         MapEditorController.Instance.Spawns.Clear();
-        foreach (Vector3Int spawn in spawns) {
+        foreach (Vector3Int spawn in map.Spawns) {
             if (spawn != null) {
                 MapEditorController.Instance.Spawns.Add(spawn);
             }
@@ -167,7 +160,7 @@ public class MapEditorMenu : PauseMenu {
         string[] map = MapEditorController.Instance.GetMapString();
         finalStrings.Add(AuthorName.text);
         finalStrings.Add(MapEditorController.Instance.SpawnCount);
-        for (int i = 0; i < map.Length; i++) {
+        for (int i = map.Length; i >= 0; i--) {
             finalStrings.Add(map[i]);
         }
         try {

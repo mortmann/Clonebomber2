@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour {
     public SuddenDeath suddenDeathPrefab;
     public CorpsePart corpsePartPrefab;
     public GameObject PlayerGamePrefab;
+    public GameObject AIPlayerGamePrefab;
 
     SuddenDeath suddenDeath;
     private bool playedHurryUpWarning;
@@ -87,7 +88,12 @@ public class PlayerController : MonoBehaviour {
         foreach (PlayerSetter ps in FindObjectsOfType<PlayerSetter>()) {
             if (ps.isDisabled)
                 continue;
-            GameObject player = Instantiate(PlayerGamePrefab);
+            GameObject player = null;
+            if (ps.isAI) {
+                player = Instantiate(AIPlayerGamePrefab);
+            } else {
+                player = Instantiate(PlayerGamePrefab);
+            }
             playerNumberToData[ps.playerNumber] = player.GetComponent<PlayerData>();
             playerNumberToData[ps.playerNumber].Set(ps);
             player.GetComponentInChildren<CustomAnimator>()
@@ -125,6 +131,8 @@ public class PlayerController : MonoBehaviour {
             if (RandomSpawns) {
                 spawn = spawns[UnityEngine.Random.Range(0, spawns.Count)];
                 spawns.Remove(spawn);
+            } else {
+                spawn = spawns[i];
             }
             pd.PlayerMove.FlyToTarget(spawn.GetCenter(), false, true);
         }
