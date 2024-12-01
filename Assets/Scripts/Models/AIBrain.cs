@@ -14,10 +14,10 @@ public class AIBrain : MonoBehaviour {
     Vector3 Position => transform.position;
     MapTile currentTile;
     Vector3? Target;
-    Vector3? nextPosition = null;
+
     void Start() {
-        move = GetComponent<AIMove>();
         data = GetComponent<PlayerData>();
+        move = GetComponent<AIMove>();
         if(GetComponent<Pathfinding2D>()==null)
             pathfinding = gameObject.AddComponent<Pathfinding2D>();
         //tiles = MapController.Instance.Tiles;
@@ -47,12 +47,12 @@ public class AIBrain : MonoBehaviour {
     }
 
     void Update() {
-        if (data.IsDead || move.isFlying)
+        if (data.IsDead || move.isFlying || move.isFalling)
             return;
         if (canReach.Count == 0) {
             CheckTileForReach(MapController.Instance.GetTile(Position));
         }
-        if(pathfinding.HasValidPath == false)
+        if (pathfinding.HasValidPath == false)
             DecideTarget();
         DoMovement();
         DecideAction();
@@ -60,11 +60,29 @@ public class AIBrain : MonoBehaviour {
 
     private void DecideTarget() {
         List<MapTile> possible = canReach.ToList();
-        foreach(Bomb b in BombController.Instance.AllBombs) {
+        foreach (Bomb b in BombController.Instance.AllBombs) {
             possible.RemoveAll(x => b.BlastBeamTiles().Contains(x));
         }
         if (possible.Count == 0)
             return;
+        FindClosestEnemyTarget(possible);
+        //FindMostBoxesTarget(possible);
+
+        Debug.Log("Target " + Target);
+    }
+
+    private void FindClosestEnemyTarget(List<MapTile> possible) {
+        List<Vector3> enemies = FindObjectsOfType<PlayerMove>()
+                    .Where(x => canReach.Contains(x.Tile))
+                    .Where(x => x.PlayerData.Team != data.Team)
+                    .OrderBy(x => Vector2.Distance(transform.position, x.transform.position))
+                    .Select(x => x.transform.position)
+                    .ToList();
+        pathfinding.Invalidate();
+        Target = enemies.FirstOrDefault();
+    }
+
+    private void FindMostBoxesTarget(List<MapTile> possible) {
         List<MapTile> ordered = possible.OrderByDescending(x => x.BoxCount).ThenBy(x => Vector3.Distance(x.GetCenter(), Position)).ToList();
         for (int i = 0; i < ordered.Count; i++) {
             if (possible.Union(Bomb.BlastBeamTiles(ordered[i].GetCenter(), move.Blastradius)).Distinct().Any() == false)
@@ -72,7 +90,6 @@ public class AIBrain : MonoBehaviour {
             Target = ordered[i].GetCenter();
             break;
         }
-        Debug.Log("Target " + Target);
     }
 
     private void DecideAction() {
@@ -85,40 +102,29 @@ public class AIBrain : MonoBehaviour {
 
     private void DoMovement() {
         currentTile = MapController.Instance.GetTile(Position);
+        if (Target.HasValue == false)
+            return;
         if ((transform.position - Target.Value).magnitude < 0.02f) {
             Target = null;
             move.SetDirection(Vector3.zero);
         }
-        if (Target.HasValue == false)
-            return;
-        if (pathfinding.HasValidPath) {
-            if (nextPosition == null) {
-                nextPosition = pathfinding.GetNext();
-                Debug.Log("nextPosition " + nextPosition);
-            }
-        }
-        else if(nextPosition == null) {
+        if(pathfinding.HasValidPath == false) {
             pathfindingCooldown -= Time.deltaTime;
             if (pathfindingCooldown < 0) {
                 pathfinding.FindPath(Position, Target.Value);
-                nextPosition = pathfinding.GetNext();
                 pathfindingCooldown = 0.25f;
             }
             return;
         }
-        if (nextPosition == null)
+        if (pathfinding.HasValidPath == false)
             return;
-        if ((nextPosition.Value - Position).magnitude > 0.02f) {
-            Vector3 dir = nextPosition.Value - transform.position;
-            //Debug.Log(nextPosition + " " + dir);
+        if ((pathfinding.Next - Position).magnitude > 0.02f) {
+            Vector3 dir = pathfinding.Next - transform.position;
             move.SetDirection(dir);
         } else {
-            nextPosition = null;
+            pathfinding.GoNext();
+            move.SetDirection(Vector3.zero);
         }
-        //else {
-        //    Target = null;
-        //    move.SetDirection(Vector3.zero);
-        //}
     }
     public float CalculateTileValue(MapTile tile) {
         return Vector3.Distance(tile.GetCenter(), Position) * tile.BoxCount * tile.PowerUPs.Count * (tile.HasBomb? 100000000 : 1);
@@ -134,5 +140,11 @@ public class AIBrain : MonoBehaviour {
                 Gizmos.DrawCube(t.worldPosition, Vector3.one * .6f);
             }
     }
-    
+
+    internal void Reset() {
+        data = GetComponent<PlayerData>();
+        move = GetComponent<AIMove>();
+        Destroy(pathfinding);
+        pathfinding = gameObject.AddComponent<Pathfinding2D>();
+    }
 }

@@ -245,4 +245,8 @@ public class Bomb : Flyable {
         }
         return tiles;
     }
+
+    protected override void IsDoneFalling() {
+        Destroy(this);
+    }
 }

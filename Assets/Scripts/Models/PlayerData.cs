@@ -28,32 +28,21 @@ public class PlayerData : MonoBehaviour {
     public int numberOfWins = 0;
 
     Bomb killedByBomb;
-
-    void OnStart() {
-        audioSource = GetComponent<AudioSource>();
-        customAnimator = GetComponentInChildren<CustomAnimator>();
-    }
-    
     public void Reset() {
-        PlayerMove = GetComponent<PlayerMove>();
         audioSource = GetComponent<AudioSource>();
-        customAnimator = GetComponentInChildren<CustomAnimator>();
-        customAnimator?.gameObject.SetActive(true);
-        customAnimator?.Reset();
+        Destroy(PlayerMove); 
         if (isAI) {
-            if (GetComponent<AIMove>() == false)
-                gameObject.AddComponent<AIMove>();
-            PlayerMove = GetComponent<AIMove>();
+            PlayerMove = gameObject.AddComponent<AIMove>();
         }
         else {
-            if (GetComponent<PlayerMove>() == false)
-                gameObject.AddComponent<PlayerMove>();
-            PlayerMove = GetComponent<PlayerMove>();
+            PlayerMove = gameObject.AddComponent<PlayerMove>();
         }
-        PlayerMove.Reset();
         IsDead = false;
         gameObject.layer = LayerMask.NameToLayer("Player");
         GetComponent<CircleCollider2D>().isTrigger = false;
+        customAnimator = GetComponentInChildren<CustomAnimator>(true);
+        customAnimator.gameObject.SetActive(true);
+        customAnimator.Reset(PlayerMove);
     }
 
     public void Set(PlayerSetter setter) {
@@ -69,8 +58,6 @@ public class PlayerData : MonoBehaviour {
         if(collider.GetComponent<Blastbeam>() != null) {
             if(IsDead==false) {
                 MapController.Instance.CreateAndFlyPowerUPs(PlayerMove.GetPowerUpsAfterDeath(), this);
-                Destroy(PlayerMove);
-                PlayerMove = null;
                 GetComponent<CircleCollider2D>().isTrigger = true;
                 audioSource.PlayOneShot(DeathClip);
                 killedByBomb = collider.GetComponent<Blastbeam>().Bomb;

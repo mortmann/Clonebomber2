@@ -415,7 +415,6 @@ MonoBehaviour:
   triggerMap: {fileID: 1113145816}
   previewMap: {fileID: 0}
   iceMap: {fileID: 1394051344}
-  currentMapType: 0
   HoleSprite: {fileID: 21300000, guid: aa3bd14b535b773499883a9a7a5a1608, type: 3}
   IceSprite: {fileID: 21300000, guid: cfa777395508f97409d69a4fbc829ffd, type: 3}
   UpArrowSprite: {fileID: 21300000, guid: 8ee55018a80279e44a3380595e393ec8, type: 3}
@@ -548,7 +547,9 @@ MonoBehaviour:
     - {fileID: 7773491377804077996, guid: 322751b0b89082043823125526a97715, type: 3}
     - {fileID: -6611490010577821925, guid: 322751b0b89082043823125526a97715, type: 3}
     MiddleSprites: []
-  explode: {fileID: 8300000, guid: c4ca103b4589d7e48bfb86db1cdf8c29, type: 3}
+  ExplodePrefab: {fileID: 8026211253386976245, guid: 043cb196a10e9e44da2e3af1923bec8f,
+    type: 3}
+  AllBombs: []
 --- !u!1 &514665994
 GameObject:
   m_ObjectHideFlags: 0

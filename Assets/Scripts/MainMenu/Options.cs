@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -9,6 +7,7 @@ using System.IO;
 using Newtonsoft.Json.Converters;
 
 public class Options : MonoBehaviour {
+    public static MapType SelectedMapType = MapType.Normal;
     private List<string> resses;
     Dictionary<string, CustomResolution> resolutions;
     public AudioMixer mixer;
@@ -16,6 +15,7 @@ public class Options : MonoBehaviour {
     public Slider soundEffectVolume;
     public Dropdown resolutionDropDown;
     public Dropdown fullscreenDropDown;
+    public Dropdown mapType;
     private string fileName = "options.ini";
 
     void Start() {
@@ -48,6 +48,8 @@ public class Options : MonoBehaviour {
         resolutionDropDown.onValueChanged.AddListener(OnResolutionChange);
         masterVolume.onValueChanged.AddListener(MasterVolumeChange);
         soundEffectVolume.onValueChanged.AddListener(SoundEffectVolumeChange);
+
+        mapType.onValueChanged.AddListener(OnMaptypeChange);
         MasterVolumeChange(50);
         SoundEffectVolumeChange(50);
         Load();
@@ -68,6 +70,9 @@ public class Options : MonoBehaviour {
         OnResolutionChange(resolutionDropDown.value);
         fullscreenDropDown.value = (int)save.resolution.fullScreenMode;
         SetFullscreen(fullscreenDropDown.value);
+
+        mapType.value = (int)save.MapType;
+        mapType.RefreshShownValue();
     }
 
     private void Save() {
@@ -82,7 +87,8 @@ public class Options : MonoBehaviour {
         OptionSave save = new OptionSave {
             MasterVolume = masterVolume.value,
             SoundEffectVolume = soundEffectVolume.value,
-            resolution = new CustomResolution(Screen.currentResolution)
+            resolution = new CustomResolution(Screen.currentResolution),
+            MapType = SelectedMapType
         };
         string filePath = System.IO.Path.Combine(path, fileName);
         File.WriteAllText(filePath, JsonConvert.SerializeObject(save,new JsonSerializerSettings { }));
@@ -97,7 +103,6 @@ public class Options : MonoBehaviour {
     }
 
     void Update() {
-
     }
     public void OnResolutionChange(int val) {
         CustomResolution cr = resolutions[resses[val]];
@@ -109,6 +114,11 @@ public class Options : MonoBehaviour {
         Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height,
             (FullScreenMode)value, Screen.currentResolution.refreshRate);
     }
+
+    private void OnMaptypeChange(int selected) {
+        SelectedMapType = (MapType)selected;
+    }
+
     /**
      * Convert the value coming from our sliders to a decibel value we can
      * feed into the audio mixer.
@@ -152,6 +162,7 @@ public class Options : MonoBehaviour {
     }
     [JsonObject]
     private class OptionSave {
+        public MapType MapType;
         public float MasterVolume;
         public float SoundEffectVolume;
         public CustomResolution resolution;

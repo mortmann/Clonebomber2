@@ -2,27 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class Flyable : MonoBehaviour {
+public abstract class Flyable : MonoBehaviour {
     protected SpriteRenderer Renderer;
     protected bool isBouncing, isRising;
     float x, flyHeight;
     protected float flySpeed;
-    protected readonly float maxFlySpeed = 13.81f;
-    private float currDistance = 0;
+    protected readonly float maxFlySpeed = 1f;
     Vector3 heightParable;
     Vector3 flySpeedParable;
     protected Vector3 flyMove;
     protected Vector3 flyTarget;
-    private bool _isFlying;
-    public bool isFlying { 
-        protected set {
-            _isFlying = value;
-        }
-        get {
-            return _isFlying;
-        } 
-    }
+    public bool isFlying { private set; get; }
     public float flyTime { private set; get; }
     string oldLayer = "";
     public bool isThrown;
@@ -34,6 +26,7 @@ public class Flyable : MonoBehaviour {
     private void Awake() {
         Renderer = GetComponentInChildren<SpriteRenderer>();
     }
+
     protected virtual void FixedUpdate() {
         if (isFlying == false && isBouncing == false)
             return;
@@ -52,17 +45,15 @@ public class Flyable : MonoBehaviour {
                                             Mathf.Clamp(flyHeight, 1, 4), 1);
         }
         if (isFlying) {
+            flyTime += Time.fixedDeltaTime;
             x = flyDistance - Mathf.Abs(Vector3.Distance(transform.position, flyTarget));
-            flyHeight = Mathf.Abs((heightParable.x * Mathf.Pow(x, 2)) + heightParable.y * x + (heightParable.z));
-            Renderer.transform.localScale = new Vector3(Mathf.Clamp(flyHeight, 1, int.MaxValue),
-                                                        Mathf.Clamp(flyHeight, 1, int.MaxValue), 1);
-            if(Input.GetKey(KeyCode.Space)) {
-                currDistance += 0.01f * flySpeed * Time.fixedDeltaTime;
-            } else {
-                currDistance += flySpeed * Time.fixedDeltaTime;
-            }
-            transform.position = Vector3.Lerp(startPosition, flyTarget, currDistance);
-            //transform.position = Vector3.MoveTowards(transform.position, flyTarget, 5 * Time.fixedDeltaTime);
+            flyHeight = CalculateParableValue(heightParable, x);
+            float T = Vector3.Distance(startPosition, flyTarget) / flySpeed;
+            Vector3 vector3 = Vector3.Lerp(startPosition, flyTarget, Mathf.Clamp01(flyTime / T));
+            Vector3 scale = new Vector3(Mathf.Clamp(flyHeight, 1, int.MaxValue),
+                                                                    Mathf.Clamp(flyHeight, 1, int.MaxValue), 1);
+            Renderer.transform.localScale = scale;
+            transform.position = vector3;
         }
         if (isFlying && transform.position==flyTarget || isFlying==false && isBouncing == false) {
             Vector2 clamp = MapController.Instance.ClampVector(transform.position);
@@ -74,6 +65,10 @@ public class Flyable : MonoBehaviour {
             gameObject.layer = oldGameObjectLayer;
             CheckTile();
         }
+    }
+
+    private float CalculateParableValue(Vector3 parable, float x) {
+        return Mathf.Abs((parable.x * Mathf.Pow(x, 2)) + parable.y * x + (parable.z));
     }
 
     protected virtual void CheckTile() {
@@ -88,8 +83,7 @@ public class Flyable : MonoBehaviour {
         target = MapController.Instance.ClampVector(target);
         this.flyTarget = MapController.Instance.GetTile(target).GetCenter();
         Vector3 flyDist = transform.position - flyTarget;        
-        flySpeed = 6f;
-        flySpeed /= Mathf.Sqrt(flyDist.x * flyDist.x + flyDist.y * flyDist.y);
+        flySpeed = flyDist.magnitude / 1.5f;
         if (flyTarget == transform.position) {
             isBouncing = true;
             isRising = true;
@@ -120,7 +114,7 @@ public class Flyable : MonoBehaviour {
         flyMove.y = target.y - transform.position.y;
         flyMove.Normalize();
 
-        currDistance = 0;
+        flyTime = 0;
         oldLayer = Renderer.sortingLayerName;
         Renderer.sortingLayerName = "Flying";
         isFlying = true;
@@ -129,15 +123,19 @@ public class Flyable : MonoBehaviour {
         float overtime = 1f;
         isFalling = true;
         while (Renderer.transform.localScale.x > 0.01f) {
-            float modifier = 0.01f * overtime;
+            float modifier = 0.1f * overtime;
+            this.gameObject.transform.position = Vector3.Slerp(this.gameObject.transform.position, flyTarget, .1f * overtime);
             Renderer.transform.localScale = new Vector3(Renderer.transform.localScale.x - modifier * 9.81f * Time.fixedDeltaTime,
                                                         Renderer.transform.localScale.y - modifier * 9.81f * Time.fixedDeltaTime);
+            Debug.Log(Renderer.transform.localScale);
             overtime += Time.fixedDeltaTime;
             yield return new WaitForEndOfFrame();
         }
-        Destroy(this);
+        IsDoneFalling();
         yield return null;
     }
+
+    protected abstract void IsDoneFalling();
 
     public Vector3 GetParabel(Vector2 v1, Vector2 v2, Vector2 v3) {
         float x1 = v1.x;

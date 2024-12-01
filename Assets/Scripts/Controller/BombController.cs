@@ -12,7 +12,7 @@ public class BombController : MonoBehaviour {
     public Blastbeam BlastbeamPrefab;
     public List<BombSprites> BombSpritesList;
     public List<BlastbeamSprites> BlastbeamList;
-    public AudioClip explode;
+    public GameObject ExplodePrefab;
     List<AudioSource> explodeSources;
     private float currentMagnitude;
     private Vector3 normalCameraPos;
@@ -72,11 +72,9 @@ public class BombController : MonoBehaviour {
     private void PlayExplodeSound(Bomb b) {
         if (this == null)
             return;
-        GameObject go = new GameObject();
-        AudioSource source = go.AddComponent<AudioSource>();
-        source.PlayOneShot(explode);
-        explodeSources.Add(source);
+        GameObject go = Instantiate(ExplodePrefab);
         go.transform.position = b.gameObject.transform.position;
+        explodeSources.Add(go.GetComponent<AudioSource>());
         currentMagnitude = ShakeAmount;
         Shake = true;
     }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class Pathfinding2D : MonoBehaviour
 {
@@ -9,7 +10,9 @@ public class Pathfinding2D : MonoBehaviour
     public List<Node2D> Path;
     public bool HasValidPath => Path != null;
 
-    public int nextIndex = -1;
+    public Vector3 Next => Path[nextIndex].worldPosition;
+
+    public int nextIndex = 0;
     Vector3 targetPos;
     void Start()
     {
@@ -89,13 +92,8 @@ public class Pathfinding2D : MonoBehaviour
 
         this.Path = path;
     }
-    public Vector3 GetNext() {
-        if (nextIndex >= Path.Count-2) {
-            Path = null;
-            return targetPos;
-        }
+    public void GoNext() {
         nextIndex++;
-        return Path[nextIndex].worldPosition;
     }
     //gets distance between 2 nodes for calculating cost
     int GetDistance(Node2D nodeA, Node2D nodeB)
@@ -106,5 +104,10 @@ public class Pathfinding2D : MonoBehaviour
         if (dstX > dstY)
             return 14 * dstY + 10 * (dstX - dstY);
         return 14 * dstX + 10 * (dstY - dstX);
+    }
+
+    internal void Invalidate() {
+        nextIndex = 0;
+        Path = null;
     }
 }

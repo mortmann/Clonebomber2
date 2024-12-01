@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,5 +23,9 @@ public class SuddenDeath : Flyable {
             MapController.Instance.DestroyTile(transform.position);
             audioSource.PlayOneShot(crunchClip);
         }
+    }
+
+    protected override void IsDoneFalling() {
+        throw new NotImplementedException();
     }
 }

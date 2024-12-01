@@ -26,17 +26,8 @@ public class PowerUP : Flyable {
                 GetComponent<AudioSource>().PlayOneShot(fallingClip);
                 StartCoroutine(Falling());
                 break;
-            }
         }
-    //private void OnCollisionEnter2D(Collision2D collision) {
-    //    if (collision.collider.GetComponent<Blastbeam>() != null) {
-    //        Destroy(this.gameObject);
-    //    }
-    //    if (collision.collider.GetComponent<PlayerMove>() != null) {
-    //        collision.collider.GetComponent<PlayerMove>().AddPowerUP(PowerType);
-    //        Destroy(this.gameObject);
-    //    }
-    //}
+    }
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.GetComponent<Blastbeam>()!=null) {
             if (PowerType == PowerUPType.Diarrhea || PowerType == PowerUPType.Joint || PowerType == PowerUPType.Superspeed) {
@@ -45,7 +36,6 @@ public class PowerUP : Flyable {
             else {
                 if(InvincibleTimer<=0)
                     StartCoroutine(DestroyDelayed());
-                //Destroy(this.gameObject);
             }
         }
         if (collision.GetComponent<PlayerMove>() != null) {
@@ -65,5 +55,9 @@ public class PowerUP : Flyable {
     internal void SetPowerType(PowerUPType powerUPType, Sprite sprite) {
         PowerType = powerUPType;
         GetComponent<SpriteRenderer>().sprite = sprite;
+    }
+
+    protected override void IsDoneFalling() {
+        Destroy(gameObject);
     }
 }

@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Random = UnityEngine.Random;
 
-public enum MapType { Normal, Graveyard, Future }
+public enum MapType { Random, Normal, Graveyard, Future }
 public enum TileType { Empty, Floor, Ice, Hole, Box, ExplodedBox, RandomBox, Spawn, Wall, ArrowUp, ArrowDown, ArrowLeft, ArrowRight}
 public class MapController : MonoBehaviour {
     public TypeSprites[] typeSprites;
@@ -24,7 +25,7 @@ public class MapController : MonoBehaviour {
 
     public Tilemap iceMap;
 
-    public MapType currentMapType = MapType.Normal;
+    public MapType currentMapType => Options.SelectedMapType;
 
     public Sprite HoleSprite;
     public Sprite IceSprite;
@@ -75,6 +76,9 @@ public class MapController : MonoBehaviour {
     }
 
     public void LoadMap(string name, bool setSpawns) {
+        if(Options.SelectedMapType == MapType.Random) {
+            LoadTileBases();
+        }
         floorMap.ClearAllTiles();
         wallMap.ClearAllTiles();
         boxMap.ClearAllTiles();
@@ -105,14 +109,6 @@ public class MapController : MonoBehaviour {
                 }
             }
         }
-        //string debugS = "";
-        //for (int y = 0; y < Tiles.GetLength(1); y++) {
-        //    for (int x = 0; x < Tiles.GetLength(0); x++) {
-        //        debugS += Tiles[x, y].BoxCount;
-        //    }
-        //    debugS += "\n";
-        //}
-        //Debug.Log(debugS);
         Spawns = new MapTile[map.Spawns.Length];
         for (int i = 0; i < map.Spawns.Length; i++) {
             Spawns[i] = Tiles[map.Spawns[i].x + 1, map.Spawns[i].y + 1];
@@ -224,7 +220,11 @@ public class MapController : MonoBehaviour {
     }
 
     public void LoadTileBases() {
-        TypeSprites current = typeSprites[(int)currentMapType];
+        int mapTypeIndex = (int)currentMapType - 1;
+        if(currentMapType == MapType.Random) {
+            mapTypeIndex = Random.Range(0, 3);
+        }
+        TypeSprites current = typeSprites[mapTypeIndex];
         Tile floorBase = ScriptableObject.CreateInstance<Tile>();
         floorBase.sprite = current.floor;
         floorBase.colliderType = Tile.ColliderType.None;

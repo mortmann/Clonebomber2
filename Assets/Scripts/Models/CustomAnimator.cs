@@ -11,17 +11,20 @@ public class CustomAnimator : MonoBehaviour {
     public Sprite[] SpritesDead;
     public float AnimationSpeed = 0.33f;
     public int NumberOfSprites = 9;
-    PlayerMove PlayerMove;
+    private PlayerMove playerMove;
     PlayerData PlayerData;
     int AnimationPos;
     float Timer;
     SpriteRenderer Renderer;
     Direction lastDirection = Direction.LEFT;
+
+    private PlayerMove PlayerMove; 
+
     void Start() {
         PlayerMove = GetComponentInParent<PlayerMove>();
         PlayerData = GetComponentInParent<PlayerData>();
         Renderer = GetComponent<SpriteRenderer>();
-        GetComponent<SpriteRenderer>().sprite = SpritesLeft[AnimationPos];
+        Renderer.sprite = SpritesLeft[AnimationPos];
     }
 
     void Update() {
@@ -76,8 +79,12 @@ public class CustomAnimator : MonoBehaviour {
         Renderer.sortingOrder =Mathf.FloorToInt( 100000f - 1000f * transform.parent.position.y );
     }
 
-    internal void Reset() {
+    internal void Reset(PlayerMove playerMove) {
+        if(Renderer != null) {
+            Renderer.sprite = SpritesLeft[AnimationPos];
+        }
         transform.localScale = new Vector3(1, 1, 1);
+        PlayerMove = playerMove;
     }
 
     internal void SetSprites(PlayerController.CharacterSprites characterSprites) {

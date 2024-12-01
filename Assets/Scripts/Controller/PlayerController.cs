@@ -10,11 +10,12 @@ using Newtonsoft.Json;
 
 public enum Teams { NoTeam, Gold, Leaf, Blood, Water }
 public class PlayerController : MonoBehaviour {
+    const float TimeWaitForGameOver = 2f;
     public Dictionary<int, PlayerData> playerNumberToData;
     public static PlayerController Instance;
     public CharacterSprites[] CharacterGraphics;
     public List<PlayerData> Players;
-    float waitForGameOver = 0.5f;
+    float waitForGameOver = 2f;
     public int NumberOfWins { get; set; } = 3 ;
     public int SuddenDeathTimerStart { get; set; } = 30; //in seconds
     public float SuddenDeathTimer { get; set; } = 30; //in seconds
@@ -111,13 +112,8 @@ public class PlayerController : MonoBehaviour {
     }
 
     internal void StartNextMap() {
-        for (int i = 0; i < Players.Count; i++) {
-            PlayerData pd = Players[i]; 
-            pd.Reset();
-            pd.gameObject.SetActive(true);
-            pd.transform.position = new Vector3(9.5f, 7.5f);
-        }
         SuddenDeathTimer = SuddenDeathTimerStart;
+        waitForGameOver = TimeWaitForGameOver;
         SceneManager.LoadScene("GameScene");
     }
 
@@ -127,6 +123,12 @@ public class PlayerController : MonoBehaviour {
         List<MapController.MapTile> spawns = new List<MapController.MapTile>(spawnPoints);
         for (int i = 0; i < Players.Count; i++) {
             PlayerData pd = Players[i];
+            pd.Reset();
+            if(pd.isAI) {
+                pd.GetComponent<AIBrain>().Reset();
+            }
+            pd.gameObject.SetActive(true);
+            pd.transform.position = new Vector3(9.5f, 7.5f);
             MapController.MapTile spawn = null;
             if (RandomSpawns) {
                 spawn = spawns[UnityEngine.Random.Range(0, spawns.Count)];
@@ -163,7 +165,6 @@ public class PlayerController : MonoBehaviour {
             if (waitForGameOver > 0)
                 return;
             List<PlayerData> pds = Players.FindAll(x => x.IsDead == false);
-            //pds.ForEach(x => x.numberOfWins++);
             if (pds.Count > 0)
                 pds[0].numberOfWins++;
             foreach (PlayerData pd in Players) {

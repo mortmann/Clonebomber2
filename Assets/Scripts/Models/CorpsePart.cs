@@ -10,6 +10,10 @@ public class CorpsePart : Flyable {
     SpriteRenderer spriteRenderer;
     private Vector2 target;
 
+    protected override void IsDoneFalling() {
+        Destroy(this);
+    }
+
     void Start() {
         flySpeed = Speed;
         spriteRenderer = GetComponent<SpriteRenderer>();
